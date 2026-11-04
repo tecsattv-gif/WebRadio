@@ -1,0 +1,71 @@
+name: Gerar APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Criar a parte Android do projeto
+        run: |
+          flutter create --platforms=android --org com.tecsattv --project-name webradio .
+          rm -rf test
+
+      - name: Chave de assinatura
+        env:
+          KS: ${{ secrets.WEBRADIO_KEYSTORE }}
+        run: |
+          if [ -n "$KS" ]; then
+            echo "$KS" | base64 -d > android/app/release.jks
+          fi
+
+      - name: Ajustar Android (Android Auto, player, assinatura)
+        run: python3 tool/patch_android.py
+
+      - name: Dependências e ícone
+        run: |
+          flutter pub get
+          dart run flutter_launcher_icons
+
+      - name: Compilar APK
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.WEBRADIO_KEYSTORE_PASSWORD }}
+        run: flutter build apk --release
+
+      - name: Nome do arquivo
+        id: ver
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          cp build/app/outputs/flutter-apk/app-release.apk "WebRadio-$VERSION.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WebRadio-${{ steps.ver.outputs.version }}
+          path: WebRadio-${{ steps.ver.outputs.version }}.apk
+
+      - name: Publicar na página de Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.ver.outputs.version }}
+          name: WebRádio ${{ steps.ver.outputs.version }}
+          files: WebRadio-${{ steps.ver.outputs.version }}.apk
+          make_latest: true

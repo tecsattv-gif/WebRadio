@@ -1,0 +1,34 @@
+name: webradio
+description: "WebRádio - ouça as rádios da sua lista, com timer, gravação e Android Auto."
+publish_to: 'none'
+
+# Versão mostrada no app (formato 1.0.0). Suba à mão a cada mudança: 1.1.0, 1.2.0...
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  audio_service: ^0.18.15
+  audio_session: any
+  just_audio: ^0.10.0
+  shared_preferences: ^2.3.0
+  path_provider: ^2.1.4
+  http: ^1.2.0
+  share_plus: ^11.0.0
+  package_info_plus: '>=8.0.0 <11.0.0'
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon.png"
+  adaptive_icon_background: "#16110D"
+  adaptive_icon_foreground: "assets/icon_foreground.png"
