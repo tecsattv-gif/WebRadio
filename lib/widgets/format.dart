@@ -14,3 +14,9 @@ String formatDate(DateTime d) {
   String two(int n) => n.toString().padLeft(2, '0');
   return '${two(d.day)}/${two(d.month)}/${d.year} ${two(d.hour)}:${two(d.minute)}';
 }
+
+/// Margem lateral que centraliza formulários em telas largas (tablet/carro).
+double sideGutter(double screenWidth, {double base = 16, double maxContent = 680}) {
+  final extra = (screenWidth - maxContent) / 2;
+  return extra > base ? extra : base;
+}

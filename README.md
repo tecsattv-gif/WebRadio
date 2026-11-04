@@ -2,12 +2,14 @@
 
 App Android para ouvir **as suas rádios** pela internet: você monta a sua lista com os links de streaming e o app toca em segundo plano, com controles na notificação, na tela de bloqueio, no fone e no **Android Auto**.
 
-Versão atual: **1.5.1**
+Versão atual: **1.6.0**
 
 ## Funções
 
 - **Visual**: tela de abertura (2,5 s) com versão e créditos; cartão "tocando agora" com a cor tirada do logo da rádio; equalizador animado quando está ao vivo; **player em tela cheia** (toque no cartão) com logo grande e controles.
 - **Separar por gênero**: botões de gênero em cima da lista (Todas, Sertanejo, Podcast…), com a quantidade de rádios de cada um; também nas Rádios sugeridas. O campo Gênero do cadastro sugere os gêneros já usados. Com um gênero escolhido a lista não reordena (volte em "Todas" para arrastar).
+- **Tela deitada e tablet**: em telas largas (central multimídia Android do carro, tablet, celular deitado) a tela inicial se divide em duas: player grande à esquerda e lista de rádios à direita. O player em tela cheia também tem versão deitada (logo de um lado, controles do outro). Em tablet em pé, o conteúdo e os formulários ficam centralizados.
+- **Central multimídia do carro**: instala como em qualquer Android 7+ (baixe o APK em Releases pelo navegador da central ou copie por pendrive). Os botões de mídia do volante funcionam se a central repassar os botões padrão do Android.
 - **Minha lista de rádios**: adicionar, editar, excluir e reordenar (arraste pela alça ☰). Nome, link do streaming, gênero/cidade e logo (opcional).
 - **Logo automático**: escolha uma imagem da galeria ou cole o link de uma imagem; o app baixa e converte sozinho num logo pequeno (PNG 128 px) guardado dentro da rádio. Assim o logo funciona sem internet, aparece na notificação/Android Auto e vai junto na sincronização e nas rádios sugeridas. Aceita PNG, JPG, WEBP e GIF (SVG não).
 - **Testar link** antes de salvar: diz se o link é de áudio ou de uma página.
@@ -114,6 +116,7 @@ Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Aut
 
 ## Histórico
 
+- **1.6.0** – layout para tela deitada e tablet: tela inicial dividida (player + lista), player em tela cheia deitado, formulários centralizados, abertura ajustada.
 - **1.5.1** – corrige a tela de abertura desalinhada (fundo agora ocupa a tela toda, conteúdo centralizado).
 - **1.5.0** – separar por gênero: botões de filtro na lista e nas sugeridas; sugestão de gêneros já usados no cadastro.
 - **1.4.0** – visual novo: abertura com créditos, cores pelo logo da rádio, equalizador animado, player em tela cheia, lista com destaque na rádio atual.

@@ -44,6 +44,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     final fade = CurvedAnimation(parent: _c, curve: Curves.easeOut);
+    final short = MediaQuery.sizeOf(context).height < 500; // tela deitada
+    final iconBox = short ? 84.0 : 120.0;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -66,11 +68,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   scale: Tween(begin: 0.85, end: 1.0).animate(
                       CurvedAnimation(parent: _c, curve: Curves.easeOutBack)),
                   child: Container(
-                    width: 120,
-                    height: 120,
+                    width: iconBox,
+                    height: iconBox,
                     decoration: BoxDecoration(
                       color: const Color(0xFFFF8A1F),
-                      borderRadius: BorderRadius.circular(34),
+                      borderRadius: BorderRadius.circular(iconBox * 0.28),
                       boxShadow: [
                         BoxShadow(
                           color: const Color(0xFFFF8A1F).withValues(alpha: 0.45),
@@ -79,13 +81,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                         ),
                       ],
                     ),
-                    child: const Icon(Icons.radio_rounded, size: 72, color: Color(0xFF16110D)),
+                    child: Icon(Icons.radio_rounded, size: iconBox * 0.6, color: const Color(0xFF16110D)),
                   ),
                 ),
-                const SizedBox(height: 26),
-                const Text(
+                SizedBox(height: short ? 12 : 26),
+                Text(
                   'WebRádio',
-                  style: TextStyle(fontSize: 34, fontWeight: FontWeight.w900, letterSpacing: -0.8),
+                  style: TextStyle(fontSize: short ? 28 : 34, fontWeight: FontWeight.w900, letterSpacing: -0.8),
                 ),
                 const SizedBox(height: 10),
                 const Equalizer(active: true, color: Color(0xFFFF8A1F), size: 26, bars: 5),

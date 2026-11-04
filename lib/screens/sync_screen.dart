@@ -89,7 +89,8 @@ class SyncScreen extends StatelessWidget {
           final code = _sync.code.value;
           final busy = _sync.busy.value;
           return ListView(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.symmetric(
+                horizontal: sideGutter(MediaQuery.sizeOf(context).width, base: 20), vertical: 20),
             children: [
               const Text(
                 'Use o mesmo código em todos os seus celulares e a lista de rádios fica igual em todos. '

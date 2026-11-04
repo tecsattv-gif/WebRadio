@@ -10,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 import '../main.dart';
 import '../models/station.dart';
 import '../services/station_store.dart';
+import '../widgets/format.dart';
 
 /// Backup e restauração da lista de rádios (com os logos).
 class BackupScreen extends StatelessWidget {
@@ -164,7 +165,8 @@ class BackupScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Backup e restauração')),
       body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: EdgeInsets.symmetric(
+            horizontal: sideGutter(MediaQuery.sizeOf(context).width, base: 0), vertical: 8),
         children: [
           const Padding(
             padding: EdgeInsets.fromLTRB(16, 4, 16, 12),

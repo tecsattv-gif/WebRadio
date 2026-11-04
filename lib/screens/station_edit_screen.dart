@@ -7,6 +7,7 @@ import '../services/logo_converter.dart';
 import '../services/stream_resolver.dart';
 import '../widgets/genre_chips.dart';
 import '../widgets/station_logo.dart';
+import '../widgets/format.dart';
 
 Future<void> openStationEditor(BuildContext context, Station? station) {
   return Navigator.push(
@@ -218,7 +219,8 @@ class _StationEditScreenState extends State<StationEditScreen> {
         child: Form(
           key: _form,
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.symmetric(
+                horizontal: sideGutter(MediaQuery.sizeOf(context).width), vertical: 16),
             children: [
               TextFormField(
                 controller: _name,

@@ -10,6 +10,7 @@ import '../widgets/now_playing_card.dart';
 import '../widgets/station_logo.dart';
 import '../services/update_service.dart';
 import 'backup_screen.dart';
+import 'player_screen.dart';
 import 'recordings_screen.dart';
 import 'suggested_screen.dart';
 import 'sync_screen.dart';
@@ -84,9 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
         valueListenable: radio.stations,
         builder: (context, list, _) {
           if (list.isEmpty) return const _EmptyState();
-          return Column(
-            children: [
-              const NowPlayingCard(),
+          final listParts = <Widget>[
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 4),
                 child: Row(
@@ -146,8 +145,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }),
               ),
-            ],
-          );
+          ];
+          return LayoutBuilder(builder: (context, c) {
+            final twoPane = c.maxWidth >= 840 || (c.maxWidth > c.maxHeight && c.maxWidth >= 600);
+            if (twoPane) {
+              // Central do carro, tablet ou celular deitado: player à esquerda, lista à direita.
+              final paneW = (c.maxWidth * 0.44).clamp(300.0, 560.0);
+              return Row(
+                children: [
+                  SizedBox(width: paneW, child: const PlayerPanel()),
+                  Container(width: 1, color: Colors.white.withValues(alpha: 0.06)),
+                  Expanded(child: Column(children: listParts)),
+                ],
+              );
+            }
+            return Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 720),
+                child: Column(children: [const NowPlayingCard(), ...listParts]),
+              ),
+            );
+          });
         },
       ),
     );
