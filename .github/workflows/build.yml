@@ -65,7 +65,14 @@ jobs:
           dart run flutter_launcher_icons
 
       - name: Compilar APK
-        run: flutter build apk --release
+        run: |
+          set +e
+          flutter build apk --release 2>&1 | tee build.log
+          RC=${PIPESTATUS[0]}
+          if [ $RC -ne 0 ]; then
+            grep -E "error|Error:|\.dart:[0-9]+" build.log | grep -v "^\s*$" | head -25 | while IFS= read -r l; do echo "::error::$l"; done
+          fi
+          exit $RC
 
       - name: Nome do arquivo
         id: ver
