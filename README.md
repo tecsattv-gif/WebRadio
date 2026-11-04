@@ -2,7 +2,7 @@
 
 App Android para ouvir **as suas rádios** pela internet: você monta a sua lista com os links de streaming e o app toca em segundo plano, com controles na notificação, na tela de bloqueio, no fone e no **Android Auto**.
 
-Versão atual: **1.5.0**
+Versão atual: **1.5.1**
 
 ## Funções
 
@@ -114,6 +114,7 @@ Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Aut
 
 ## Histórico
 
+- **1.5.1** – corrige a tela de abertura desalinhada (fundo agora ocupa a tela toda, conteúdo centralizado).
 - **1.5.0** – separar por gênero: botões de filtro na lista e nas sugeridas; sugestão de gêneros já usados no cadastro.
 - **1.4.0** – visual novo: abertura com créditos, cores pelo logo da rádio, equalizador animado, player em tela cheia, lista com destaque na rádio atual.
 - **1.3.1** – primeira versão assinada com a chave definitiva (segredos WEBRADIO_KEYSTORE). Quem tem versão anterior precisa desinstalar uma única vez; daí em diante as atualizações instalam por cima.

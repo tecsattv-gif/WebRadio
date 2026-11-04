@@ -46,6 +46,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     final fade = CurvedAnimation(parent: _c, curve: Curves.easeOut);
     return Scaffold(
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: RadialGradient(
             center: Alignment(0, -0.25),
@@ -57,6 +59,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           child: FadeTransition(
             opacity: fade,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Spacer(flex: 3),
                 ScaleTransition(
@@ -92,6 +95,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       style: const TextStyle(color: Colors.white54, fontSize: 13)),
                 const SizedBox(height: 6),
                 const Text('Criado por Luiz Alberto Cardoso',
+                    textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w600)),
                 const Text('tecsattv@gmail.com',
                     style: TextStyle(color: Colors.white38, fontSize: 12)),
