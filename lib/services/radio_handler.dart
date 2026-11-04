@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../models/station.dart';
 import 'recorder.dart';
@@ -38,11 +41,16 @@ class RadioHandler extends BaseAudioHandler {
   String? _resolvedUrl;
   Timer? _retryTimer;
   Timer? _sleepTimer;
+  String? _artDir;
 
   Future<void> init() async {
     try {
       final session = await AudioSession.instance;
       await session.configure(const AudioSessionConfiguration.music());
+    } catch (_) {}
+
+    try {
+      _artDir = (await getTemporaryDirectory()).path;
     } catch (_) {}
 
     stations.value = await StationStore.load();
@@ -103,9 +111,23 @@ class RadioHandler extends BaseAudioHandler {
       title: song ?? s.name,
       artist: song != null ? s.name : (genre.isNotEmpty ? genre : 'Rádio ao vivo'),
       album: s.name,
-      artUri: logo.isEmpty ? null : Uri.tryParse(logo),
+      artUri: _artFileFor(s) ?? (logo.isEmpty ? null : Uri.tryParse(logo)),
       playable: true,
     );
+  }
+
+  /// Logo convertido vira arquivo, para aparecer na notificação e no carro.
+  Uri? _artFileFor(Station s) {
+    final data = s.logoData;
+    final dir = _artDir;
+    if (data == null || data.isEmpty || dir == null) return null;
+    try {
+      final f = File('$dir/logo_${s.id}_${data.length}.png');
+      if (!f.existsSync()) f.writeAsBytesSync(base64Decode(data));
+      return Uri.file(f.path);
+    } catch (_) {
+      return null;
+    }
   }
 
   void _setCurrent(Station s) {

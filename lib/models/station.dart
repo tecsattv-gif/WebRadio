@@ -8,12 +8,16 @@ class Station {
   final String? genre;
   final String? logoUrl;
 
+  /// Logo convertido (PNG pequeno em base64). Tem prioridade sobre logoUrl.
+  final String? logoData;
+
   const Station({
     required this.id,
     required this.name,
     required this.url,
     this.genre,
     this.logoUrl,
+    this.logoData,
   });
 
   static final Random _rnd = Random();
@@ -28,6 +32,7 @@ class Station {
     String? url,
     String? genre,
     String? logoUrl,
+    String? logoData,
   }) =>
       Station(
         id: id ?? this.id,
@@ -35,6 +40,7 @@ class Station {
         url: url ?? this.url,
         genre: genre ?? this.genre,
         logoUrl: logoUrl ?? this.logoUrl,
+        logoData: logoData ?? this.logoData,
       );
 
   Map<String, dynamic> toJson() => {
@@ -43,6 +49,7 @@ class Station {
         'url': url,
         if (genre != null && genre!.isNotEmpty) 'genre': genre,
         if (logoUrl != null && logoUrl!.isNotEmpty) 'logoUrl': logoUrl,
+        if (logoData != null && logoData!.isNotEmpty) 'logoData': logoData,
       };
 
   factory Station.fromJson(Map<String, dynamic> j) => Station(
@@ -51,5 +58,6 @@ class Station {
         url: (j['url'] as String?)?.trim() ?? '',
         genre: (j['genre'] as String?)?.trim(),
         logoUrl: (j['logoUrl'] as String?)?.trim(),
+        logoData: j['logoData'] as String?,
       );
 }

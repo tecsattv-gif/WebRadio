@@ -2,11 +2,12 @@
 
 App Android para ouvir **as suas rádios** pela internet: você monta a sua lista com os links de streaming e o app toca em segundo plano, com controles na notificação, na tela de bloqueio, no fone e no **Android Auto**.
 
-Versão atual: **1.1.0**
+Versão atual: **1.2.0**
 
 ## Funções
 
 - **Minha lista de rádios**: adicionar, editar, excluir e reordenar (arraste pela alça ☰). Nome, link do streaming, gênero/cidade e logo (opcional).
+- **Logo automático**: escolha uma imagem da galeria ou cole o link de uma imagem; o app baixa e converte sozinho num logo pequeno (PNG 128 px) guardado dentro da rádio. Assim o logo funciona sem internet, aparece na notificação/Android Auto e vai junto na sincronização e nas rádios sugeridas. Aceita PNG, JPG, WEBP e GIF (SVG não).
 - **Testar link** antes de salvar: diz se o link é de áudio ou de uma página.
 - Aceita link direto (MP3, AAC, OGG), **HLS (.m3u8)** e playlists **.pls / .m3u / .asx** (o app acha o áudio dentro delas).
 - **Toca em segundo plano** com notificação, tela de bloqueio e botões do fone (play/pausa, próxima, anterior).
@@ -25,7 +26,7 @@ Versão atual: **1.1.0**
 
 Projeto **WebRadio001** (`webradio001-c911b`), plano Spark (grátis). O app usa a API REST do Firestore e do Authentication (sem SDK nativo).
 
-- `radios_publicas/{id}`: rádios sugeridas (campos `name`, `url`, `genre`, `logoUrl`, `criado`). Leitura pública; gravação só do administrador.
+- `radios_publicas/{id}`: rádios sugeridas (campos `name`, `url`, `genre`, `logoUrl`, `logoData`, `criado`). Leitura pública; gravação só do administrador.
 - `listas/{codigo}`: lista sincronizada de cada código (campos `dados` = JSON das rádios, `atualizado` = hora em ms).
 - Authentication: provedor **E-mail/senha**, usuário administrador tecsattv@gmail.com. A senha não fica no código.
 
@@ -90,6 +91,7 @@ lib/
   services/stream_resolver.dart links .pls/.m3u e teste de link
   services/firebase_api.dart    Firestore/Authentication (REST)
   services/sync_service.dart    sincronização da lista entre celulares
+  services/logo_converter.dart  converte link/galeria em logo PNG pequeno
   screens/                      telas: início, editar rádio, gravações,
                                 rádios sugeridas, sincronizar celulares
   widgets/                      cartão "tocando agora", logo, formatação
@@ -98,10 +100,11 @@ tool/patch_android.py           ajusta a pasta android/ durante o build
 assets/                         ícone do app
 ```
 
-Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Auto).
+Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Auto), `image_picker` (galeria).
 
 ## Histórico
 
+- **1.2.0** – logo automático: escolher da galeria ou colar link, com conversão para logo pequeno guardado na rádio (aparece também na notificação e no carro).
 - **1.1.0** – banco Firebase: sincronização da lista entre celulares por código, rádios sugeridas (lista pública) e modo administrador para publicar.
 - **1.0.0** – primeira versão: lista de rádios, segundo plano, reconexão, nome da música, timer, gravação, Android Auto, importar/exportar.
 

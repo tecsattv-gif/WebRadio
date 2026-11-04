@@ -114,6 +114,7 @@ class FirebaseApi {
       url: s('url') ?? '',
       genre: s('genre'),
       logoUrl: s('logoUrl'),
+      logoData: s('logoData'),
     );
   }
 
@@ -146,6 +147,7 @@ class FirebaseApi {
         'url': {'stringValue': s.url},
         if ((s.genre ?? '').isNotEmpty) 'genre': {'stringValue': s.genre},
         if ((s.logoUrl ?? '').isNotEmpty) 'logoUrl': {'stringValue': s.logoUrl},
+        if ((s.logoData ?? '').isNotEmpty) 'logoData': {'stringValue': s.logoData},
         'criado': {'integerValue': '${DateTime.now().millisecondsSinceEpoch}'},
       };
 

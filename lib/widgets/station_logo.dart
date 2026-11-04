@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 import '../models/station.dart';
@@ -8,6 +11,22 @@ class StationLogo extends StatelessWidget {
   final double size;
 
   const StationLogo({super.key, required this.station, this.size = 48});
+
+  static final Map<String, Uint8List> _cache = {};
+
+  static Uint8List? bytesOf(String? data) {
+    if (data == null || data.isEmpty) return null;
+    final cached = _cache[data];
+    if (cached != null) return cached;
+    try {
+      final b = base64Decode(data);
+      if (_cache.length > 300) _cache.clear();
+      _cache[data] = b;
+      return b;
+    } catch (_) {
+      return null;
+    }
+  }
 
   String get _initials {
     final words = station.name
@@ -52,6 +71,26 @@ class StationLogo extends StatelessWidget {
         ),
       ),
     );
+    final bytes = bytesOf(station.logoData);
+    if (bytes != null) {
+      return ClipRRect(
+        borderRadius: radius,
+        child: Container(
+          width: size,
+          height: size,
+          color: Colors.white,
+          child: Image.memory(
+            bytes,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+            gaplessPlayback: true,
+            filterQuality: FilterQuality.medium,
+            errorBuilder: (context, error, stack) => fallback,
+          ),
+        ),
+      );
+    }
     final logo = station.logoUrl?.trim() ?? '';
     if (logo.isEmpty) return fallback;
     return ClipRRect(
@@ -64,7 +103,7 @@ class StationLogo extends StatelessWidget {
           logo,
           width: size,
           height: size,
-          fit: BoxFit.cover,
+          fit: BoxFit.contain,
           errorBuilder: (context, error, stack) => fallback,
         ),
       ),
