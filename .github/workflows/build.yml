@@ -31,22 +31,29 @@ jobs:
 
       - name: Chave de assinatura
         env:
-          KP: ${{ secrets.WEBRADIO_KEYSTORE_PASSWORD }}
+          S1: ${{ secrets.WEBRADIO_KEYSTORE_PASSWORD }}
+          S2: ${{ secrets.WEBRADIO_KEYSTORE }}
         run: |
-          # A chave fica criptografada no repositório; só a senha (segredo) abre.
-          if [ -z "$KP" ]; then
-            echo "::warning::Sem o segredo WEBRADIO_KEYSTORE_PASSWORD: APK com chave de teste."
-            exit 0
-          fi
-          KP=$(printf '%s' "$KP" | tr -d ' \r\n\t')
-          echo "::add-mask::$KP"
-          if ! openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 \
-              -in keystore/release.jks.enc -out android/app/release.jks -pass "pass:$KP" 2>/dev/null \
-             || ! keytool -list -keystore android/app/release.jks -storepass "$KP" > /dev/null 2>&1; then
-            echo "::error::A senha WEBRADIO_KEYSTORE_PASSWORD está errada. Cole de novo a senha do arquivo segredos-github-webradio.txt."
+          # A chave fica criptografada no repositório; a senha (segredo) abre.
+          OK=""
+          for RAW in "$S1" "$S2"; do
+            [ -z "$RAW" ] && continue
+            KP=$(printf '%s' "$RAW" | tr -d ' \r\n\t')
+            echo "::add-mask::$KP"
+            echo "Testando segredo com ${#KP} caracteres"
+            if openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 \
+                 -in keystore/release.jks.enc -out android/app/release.jks -pass "pass:$KP" 2>/dev/null \
+               && keytool -list -keystore android/app/release.jks -storepass "$KP" > /dev/null 2>&1; then
+              OK=1
+              echo "KEYSTORE_PASSWORD=$KP" >> "$GITHUB_ENV"
+              break
+            fi
+          done
+          if [ -z "$OK" ]; then
+            rm -f android/app/release.jks
+            echo "::error::Nenhum segredo abre a chave. Apague e crie de novo WEBRADIO_KEYSTORE_PASSWORD com a senha de 24 letras/números."
             exit 1
           fi
-          echo "KEYSTORE_PASSWORD=$KP" >> "$GITHUB_ENV"
           echo "Chave de assinatura OK"
 
       - name: Ajustar Android (Android Auto, player, assinatura)
