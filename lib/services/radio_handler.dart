@@ -7,6 +7,7 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/station.dart';
 import 'recorder.dart';
@@ -21,7 +22,15 @@ enum RadioStatus { idle, connecting, playing, paused, reconnecting, error }
 class RadioHandler extends BaseAudioHandler {
   static const String _folderId = 'minhas_radios';
 
-  final AudioPlayer _player = AudioPlayer();
+  // As interrupções (outro app, ligação, GPS) são tratadas aqui mesmo.
+  final AudioPlayer _player = AudioPlayer(handleInterruptions: false);
+
+  /// Continuar tocando quando outro app pegar o som (padrão: sim).
+  final ValueNotifier<bool> keepPlayingWithOtherApps = ValueNotifier(true);
+  static const _kKeepPlaying = 'keep_playing_other_apps';
+  double _fade = 1.0; // timer de desligar
+  double _duck = 1.0; // GPS falando
+  bool _pausedByInterruption = false;
   final Recorder recorder = Recorder();
   final SyncService sync = SyncService();
 
@@ -45,8 +54,15 @@ class RadioHandler extends BaseAudioHandler {
 
   Future<void> init() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      keepPlayingWithOtherApps.value = prefs.getBool(_kKeepPlaying) ?? true;
       final session = await AudioSession.instance;
       await session.configure(const AudioSessionConfiguration.music());
+      session.interruptionEventStream.listen(_onInterruption);
+      // Fone desconectado: pausa para não sair som no alto-falante.
+      session.becomingNoisyEventStream.listen((_) {
+        if (isActive) pause();
+      });
     } catch (_) {}
 
     try {
@@ -423,11 +439,60 @@ class RadioHandler extends BaseAudioHandler {
     return stations.value.map((s) => _itemFor(s)).toList();
   }
 
+  // ------------------------------------------------------------ interrupções
+
+  void _applyVolume() {
+    unawaited(_player.setVolume((_fade * _duck).clamp(0.0, 1.0).toDouble()));
+  }
+
+  Future<void> setKeepPlayingWithOtherApps(bool v) async {
+    keepPlayingWithOtherApps.value = v;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kKeepPlaying, v);
+  }
+
+  void _onInterruption(AudioInterruptionEvent e) {
+    if (e.begin) {
+      switch (e.type) {
+        case AudioInterruptionType.duck:
+          // GPS/aviso curto: abaixa o volume.
+          _duck = 0.3;
+          _applyVolume();
+        case AudioInterruptionType.pause:
+          // Interrupção temporária (ligação, áudio curto): pausa e volta depois.
+          if (isActive) {
+            _pausedByInterruption = true;
+            pause();
+          }
+        case AudioInterruptionType.unknown:
+          // Outro app pegou o som de vez (vídeo, música, rede social).
+          if (!keepPlayingWithOtherApps.value && isActive) {
+            _pausedByInterruption = false;
+            pause();
+          }
+      }
+    } else {
+      switch (e.type) {
+        case AudioInterruptionType.duck:
+          _duck = 1.0;
+          _applyVolume();
+        case AudioInterruptionType.pause:
+          if (_pausedByInterruption) {
+            _pausedByInterruption = false;
+            play();
+          }
+        case AudioInterruptionType.unknown:
+          break;
+      }
+    }
+  }
+
   // ------------------------------------------------------------ timer
 
   void startSleepTimer(Duration d) {
     _sleepTimer?.cancel();
-    unawaited(_player.setVolume(1));
+    _fade = 1.0;
+    _applyVolume();
     final end = DateTime.now().add(d);
     sleepRemaining.value = d;
     _sleepTimer = Timer.periodic(const Duration(seconds: 1), (t) {
@@ -442,7 +507,8 @@ class RadioHandler extends BaseAudioHandler {
       sleepRemaining.value = left;
       // Abaixa o volume aos poucos nos últimos 20 segundos.
       if (left.inSeconds < 20) {
-        unawaited(_player.setVolume(left.inMilliseconds / 20000));
+        _fade = left.inMilliseconds / 20000;
+        _applyVolume();
       }
     });
   }
@@ -451,7 +517,8 @@ class RadioHandler extends BaseAudioHandler {
     _sleepTimer?.cancel();
     _sleepTimer = null;
     sleepRemaining.value = null;
-    unawaited(_player.setVolume(1));
+    _fade = 1.0;
+    _applyVolume();
   }
 
   // ------------------------------------------------------------ gravação

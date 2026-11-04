@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../main.dart';
 import '../services/update_service.dart';
 import '../widgets/format.dart';
 import 'backup_screen.dart';
@@ -98,6 +99,28 @@ class _GeneralTab extends StatelessWidget {
             () => _go(context, const BackupScreen())),
         tile(Icons.library_music_outlined, 'Gravações', 'Ouvir, compartilhar e apagar',
             () => _go(context, const RecordingsScreen())),
+        const Divider(),
+        ValueListenableBuilder<bool>(
+          valueListenable: radio.keepPlayingWithOtherApps,
+          builder: (context, v, _) => SwitchListTile(
+            secondary: Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF8A1F).withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.layers_outlined, color: Color(0xFFFF8A1F)),
+            ),
+            title: const Text('Continuar tocando com outros apps',
+                style: TextStyle(fontWeight: FontWeight.w600)),
+            subtitle: const Text(
+                'Não pausa ao abrir vídeo ou outro app de som. Ligações sempre pausam e o GPS só abaixa o volume.'),
+            value: v,
+            activeThumbColor: const Color(0xFFFF8A1F),
+            onChanged: (nv) => radio.setKeepPlayingWithOtherApps(nv),
+          ),
+        ),
         const Divider(),
         tile(Icons.system_update, 'Procurar atualização', 'Ver se há versão nova',
             () => UpdateService.checkManually(context)),

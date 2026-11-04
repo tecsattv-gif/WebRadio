@@ -2,12 +2,13 @@
 
 App Android para ouvir **as suas rádios** pela internet: você monta a sua lista com os links de streaming e o app toca em segundo plano, com controles na notificação, na tela de bloqueio, no fone e no **Android Auto**.
 
-Versão atual: **1.7.1**
+Versão atual: **1.7.2**
 
 ## Funções
 
 - **Visual**: tela de abertura (2,5 s) com versão e créditos; cartão "tocando agora" com a cor tirada do logo da rádio; equalizador animado quando está ao vivo; **player em tela cheia** (toque no cartão) com logo grande e controles.
 - **Separar por gênero**: botões de gênero em cima da lista (Todas, Sertanejo, Podcast…), com a quantidade de rádios de cada um; também nas Rádios sugeridas. O campo Gênero do cadastro sugere os gêneros já usados. Com um gênero escolhido a lista não reordena (volte em "Todas" para arrastar).
+- **Outros apps, ligações e GPS**: por padrão a rádio **continua tocando** quando outro app pega o som (opção em Configurações > Geral). Durante ligação pausa e volta sozinha ao desligar; quando o GPS (Maps/Waze) fala, o volume abaixa e depois volta; ao desconectar o fone, pausa.
 - **Bluetooth**: ícone discreto no topo (tela inicial e player em tela cheia) que abre as configurações de Bluetooth do Android para conectar caixa de som, fone ou o carro. O Android não permite que apps liguem o Bluetooth sozinhos.
 - **Configurações** (engrenagem no topo), com duas abas:
   - **Buscar rádios**: busca no diretório gratuito Radio Browser por nome, estilo (Sertanejo, Gospel, Notícias, Forró…) e país (Brasil por padrão). Toque no ▶ para ouvir antes e no + para adicionar à lista — o app já traz o logo (convertido) e o gênero.
@@ -124,6 +125,7 @@ Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Aut
 
 ## Histórico
 
+- **1.7.2** – não pausa mais ao abrir outro app (opção "Continuar tocando com outros apps"); pausa em ligação e retoma depois; abaixa o volume quando o GPS fala; pausa ao desconectar o fone.
 - **1.7.1** – botão discreto de Bluetooth no topo (abre as configurações de Bluetooth do Android).
 - **1.7.0** – Configurações com aba **Buscar rádios** (Radio Browser: nome, estilo, país, ouvir antes, adicionar com logo) e aba **Geral**; inclui o layout para tela deitada/tablet da 1.6.0 (que não chegou a ser publicada).
 - **1.6.0** – layout para tela deitada e tablet: tela inicial dividida (player + lista), player em tela cheia deitado, formulários centralizados, abertura ajustada.
