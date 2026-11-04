@@ -2,10 +2,11 @@
 
 App Android para ouvir **as suas rádios** pela internet: você monta a sua lista com os links de streaming e o app toca em segundo plano, com controles na notificação, na tela de bloqueio, no fone e no **Android Auto**.
 
-Versão atual: **1.3.1**
+Versão atual: **1.4.0**
 
 ## Funções
 
+- **Visual**: tela de abertura (2,5 s) com versão e créditos; cartão "tocando agora" com a cor tirada do logo da rádio; equalizador animado quando está ao vivo; **player em tela cheia** (toque no cartão) com logo grande e controles.
 - **Minha lista de rádios**: adicionar, editar, excluir e reordenar (arraste pela alça ☰). Nome, link do streaming, gênero/cidade e logo (opcional).
 - **Logo automático**: escolha uma imagem da galeria ou cole o link de uma imagem; o app baixa e converte sozinho num logo pequeno (PNG 128 px) guardado dentro da rádio. Assim o logo funciona sem internet, aparece na notificação/Android Auto e vai junto na sincronização e nas rádios sugeridas. Aceita PNG, JPG, WEBP e GIF (SVG não).
 - **Testar link** antes de salvar: diz se o link é de áudio ou de uma página.
@@ -94,6 +95,10 @@ lib/
   services/sync_service.dart    sincronização da lista entre celulares
   services/logo_converter.dart  converte link/galeria em logo PNG pequeno
   services/update_service.dart  atualização pelo app (Releases do GitHub)
+  screens/player_screen.dart    player em tela cheia
+  screens/splash_screen.dart    abertura com créditos
+  widgets/station_colors.dart   cor de cada rádio tirada do logo
+  widgets/equalizer.dart        equalizador animado
   screens/                      telas: início, editar rádio, gravações,
                                 rádios sugeridas, sincronizar celulares,
                                 backup e restauração
@@ -107,6 +112,7 @@ Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Aut
 
 ## Histórico
 
+- **1.4.0** – visual novo: abertura com créditos, cores pelo logo da rádio, equalizador animado, player em tela cheia, lista com destaque na rádio atual.
 - **1.3.1** – primeira versão assinada com a chave definitiva (segredos WEBRADIO_KEYSTORE). Quem tem versão anterior precisa desinstalar uma única vez; daí em diante as atualizações instalam por cima.
 - **1.3.0** – atualização pelo próprio app (avisa, baixa e instala com autorização) e tela de Backup e restauração (salvar no celular, compartilhar, restaurar substituindo ou juntando).
 - **1.2.0** – logo automático: escolher da galeria ou colar link, com conversão para logo pequeno guardado na rádio (aparece também na notificação e no carro).

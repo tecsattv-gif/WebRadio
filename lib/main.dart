@@ -1,7 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 
-import 'screens/home_screen.dart';
+import 'screens/splash_screen.dart';
 import 'services/firebase_api.dart';
 import 'services/radio_handler.dart';
 
@@ -49,8 +49,26 @@ class WebRadioApp extends StatelessWidget {
           centerTitle: false,
         ),
         snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
+        popupMenuTheme: PopupMenuThemeData(
+          color: const Color(0xFF221A14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        ),
+        dialogTheme: DialogThemeData(
+          backgroundColor: const Color(0xFF1E1712),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+        ),
+        bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Color(0xFF1E1712)),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white.withValues(alpha: 0.04),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: seed,
+          foregroundColor: Colors.black,
+        ),
       ),
-      home: const HomeScreen(),
+      home: const SplashScreen(),
     );
   }
 }

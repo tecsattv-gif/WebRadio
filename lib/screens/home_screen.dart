@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../main.dart';
 import '../models/station.dart';
 import '../services/radio_handler.dart';
+import '../widgets/equalizer.dart';
 import '../widgets/now_playing_card.dart';
 import '../widgets/station_logo.dart';
 import '../services/update_service.dart';
@@ -84,10 +85,29 @@ class _HomeScreenState extends State<HomeScreen> {
           return Column(
             children: [
               const NowPlayingCard(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 4),
+                child: Row(
+                  children: [
+                    const Text('Minhas rádios',
+                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text('${list.length}',
+                          style: const TextStyle(fontSize: 12, color: Colors.white70)),
+                    ),
+                  ],
+                ),
+              ),
               Expanded(
                 child: ReorderableListView.builder(
                   buildDefaultDragHandles: false,
-                  padding: const EdgeInsets.only(bottom: 96),
+                  padding: const EdgeInsets.only(top: 4, bottom: 100),
                   itemCount: list.length,
                   onReorder: (a, b) => radio.reorder(a, b),
                   itemBuilder: (context, i) => _StationTile(
@@ -155,12 +175,19 @@ class _StationTile extends StatelessWidget {
         final active = isCurrent && radio.status.value == RadioStatus.playing;
         final genre = station.genre?.trim() ?? '';
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
           child: Material(
             color: isCurrent
-                ? scheme.primary.withValues(alpha: 0.14)
-                : Colors.white.withValues(alpha: 0.04),
-            borderRadius: BorderRadius.circular(16),
+                ? scheme.primary.withValues(alpha: 0.12)
+                : Colors.white.withValues(alpha: 0.035),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+              side: BorderSide(
+                color: isCurrent
+                    ? scheme.primary.withValues(alpha: 0.55)
+                    : Colors.white.withValues(alpha: 0.05),
+              ),
+            ),
             clipBehavior: Clip.antiAlias,
             child: ListTile(
               contentPadding: const EdgeInsets.fromLTRB(10, 4, 0, 4),
@@ -182,7 +209,7 @@ class _StationTile extends StatelessWidget {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (active) Icon(Icons.graphic_eq_rounded, color: scheme.primary),
+                  if (active) Equalizer(active: true, color: scheme.primary, size: 18),
                   PopupMenuButton<String>(
                     onSelected: (v) {
                       if (v == 'edit') {
