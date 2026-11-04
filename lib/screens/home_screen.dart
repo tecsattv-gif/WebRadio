@@ -1,16 +1,13 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../main.dart';
 import '../models/station.dart';
 import '../services/radio_handler.dart';
-import '../services/station_store.dart';
 import '../widgets/now_playing_card.dart';
 import '../widgets/station_logo.dart';
+import '../services/update_service.dart';
+import 'backup_screen.dart';
 import 'recordings_screen.dart';
 import 'suggested_screen.dart';
 import 'sync_screen.dart';
@@ -31,6 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     // Ao voltar para o app, pega as mudanças feitas em outro celular.
     _lifecycle = AppLifecycleListener(onResume: () => radio.sync.syncNow());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) UpdateService.checkOnStart(context);
+    });
   }
 
   @override
@@ -64,9 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
             itemBuilder: (_) => const [
               PopupMenuItem(value: 'suggested', child: Text('Rádios sugeridas')),
               PopupMenuItem(value: 'sync', child: Text('Sincronizar celulares')),
+              PopupMenuItem(value: 'backup', child: Text('Backup e restauração')),
               PopupMenuDivider(),
-              PopupMenuItem(value: 'import', child: Text('Importar rádios')),
-              PopupMenuItem(value: 'export', child: Text('Exportar minha lista')),
+              PopupMenuItem(value: 'update', child: Text('Procurar atualização')),
               PopupMenuItem(value: 'about', child: Text('Sobre')),
             ],
           ),
@@ -112,80 +112,14 @@ class _HomeScreenState extends State<HomeScreen> {
       case 'sync':
         await Navigator.push(
             context, MaterialPageRoute(builder: (_) => const SyncScreen()));
-      case 'import':
-        await _import(context);
-      case 'export':
-        await _export(context);
+      case 'backup':
+        await Navigator.push(
+            context, MaterialPageRoute(builder: (_) => const BackupScreen()));
+      case 'update':
+        await UpdateService.checkManually(context);
       case 'about':
         await _about(context);
     }
-  }
-
-  Future<void> _export(BuildContext context) async {
-    final messenger = ScaffoldMessenger.of(context);
-    if (radio.stations.value.isEmpty) {
-      messenger.showSnackBar(const SnackBar(content: Text('A lista está vazia.')));
-      return;
-    }
-    final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/minhas_radios.json');
-    await file.writeAsString(StationStore.exportJson(radio.stations.value));
-    await SharePlus.instance.share(ShareParams(
-      files: [XFile(file.path, mimeType: 'application/json')],
-      subject: 'Minhas rádios (WebRádio)',
-    ));
-  }
-
-  Future<void> _import(BuildContext context) async {
-    final messenger = ScaffoldMessenger.of(context);
-    final ctrl = TextEditingController();
-    final text = await showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Importar rádios'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Cole aqui o conteúdo da lista exportada, ou uma rádio por linha:\n'
-                'Nome | http://link-da-radio',
-                style: TextStyle(fontSize: 13, color: Colors.white70),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: ctrl,
-                minLines: 5,
-                maxLines: 10,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Rádio Exemplo | http://...',
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, ctrl.text),
-            child: const Text('Importar'),
-          ),
-        ],
-      ),
-    );
-    if (text == null || text.trim().isEmpty) return;
-    final parsed = StationStore.parseImport(text);
-    final added = await radio.importStations(parsed);
-    messenger.showSnackBar(SnackBar(
-      content: Text(parsed.isEmpty
-          ? 'Não encontrei nenhum link de rádio no texto.'
-          : added == 0
-              ? 'Essas rádios já estão na lista.'
-              : '$added rádio(s) adicionada(s).'),
-    ));
   }
 
   Future<void> _about(BuildContext context) async {

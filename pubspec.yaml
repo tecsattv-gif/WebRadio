@@ -3,7 +3,7 @@ description: "WebRádio - ouça as rádios da sua lista, com timer, gravação e
 publish_to: 'none'
 
 # Versão mostrada no app (formato 1.0.0). Suba à mão a cada mudança: 1.1.0, 1.2.0...
-version: 1.2.0+3
+version: 1.3.0+4
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -19,6 +19,8 @@ dependencies:
   http: ^1.2.0
   share_plus: ^11.0.0
   image_picker: ^1.1.2
+  file_picker: '>=8.1.0 <11.0.0'
+  open_filex: ^4.5.0
   package_info_plus: '>=8.0.0 <11.0.0'
 
 dev_dependencies:

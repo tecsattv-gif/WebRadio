@@ -512,6 +512,13 @@ class RadioHandler extends BaseAudioHandler {
     _broadcast();
   }
 
+  /// Restaurar backup: troca a lista inteira.
+  Future<void> replaceStations(List<Station> list) async {
+    stations.value = [...list];
+    await _persist();
+    _broadcast();
+  }
+
   /// Junta rádios importadas, ignorando links repetidos. Devolve quantas entraram.
   Future<int> importStations(List<Station> incoming) async {
     final urls = stations.value.map((s) => s.url.trim()).toSet();

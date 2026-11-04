@@ -2,7 +2,7 @@
 
 App Android para ouvir **as suas rádios** pela internet: você monta a sua lista com os links de streaming e o app toca em segundo plano, com controles na notificação, na tela de bloqueio, no fone e no **Android Auto**.
 
-Versão atual: **1.2.0**
+Versão atual: **1.3.0**
 
 ## Funções
 
@@ -19,7 +19,9 @@ Versão atual: **1.2.0**
 - **Sincronizar celulares** (menu ⋮): crie um código num celular e digite o mesmo código nos outros; a lista de rádios fica igual em todos (vale a alteração mais recente). Sincroniza ao abrir o app, ao voltar para ele e a cada mudança.
 - **Rádios sugeridas** (menu ⋮): lista pública publicada pelo administrador. Qualquer usuário busca e adiciona à própria lista com um toque.
 - **Modo administrador** (Rádios sugeridas > ⋮ > Entrar como administrador): com o e-mail tecsattv@gmail.com e a senha cadastrada no Firebase, publica rádios da própria lista e remove sugeridas (segurar a rádio).
-- **Importar / Exportar** a lista (arquivo JSON ou texto "Nome | link", uma rádio por linha, também aceita M3U).
+- **Backup e restauração** (menu ⋮): salvar o backup no celular (você escolhe a pasta; mesmo nome substitui o anterior), compartilhar (Drive, WhatsApp, e-mail) e restaurar, substituindo a lista ou só juntando as rádios que faltam. O backup leva as rádios com os logos; as gravações não entram.
+- **Importar links** (em Backup e restauração): colar texto "Nome | link", uma rádio por linha, ou M3U.
+- **Atualização pelo próprio app**: ao abrir, o app confere a última versão nas Releases do GitHub, pergunta se quer atualizar, baixa o APK e abre o instalador. Também em menu ⋮ > Procurar atualização. Na primeira vez o Android pede para permitir "Instalar apps desconhecidos" para o WebRádio.
 - Tela **Sobre** com a versão e os créditos.
 
 ## Firebase (banco online)
@@ -77,7 +79,7 @@ Sem esses segredos o APK é gerado com chave de teste, e cada versão nova exige
 
 ### Nova versão
 
-Suba a versão à mão em `pubspec.yaml` a cada mudança (`1.0.0` → `1.1.0` → `1.2.0`…).
+Suba a versão à mão em `pubspec.yaml` a cada mudança (`1.0.0` → `1.1.0` → `1.2.0`…). O build publica a Release `v<versão>` e os celulares recebem o aviso de atualização. O repositório precisa continuar **público** para a atualização pelo app funcionar.
 
 ## Estrutura
 
@@ -92,18 +94,21 @@ lib/
   services/firebase_api.dart    Firestore/Authentication (REST)
   services/sync_service.dart    sincronização da lista entre celulares
   services/logo_converter.dart  converte link/galeria em logo PNG pequeno
+  services/update_service.dart  atualização pelo app (Releases do GitHub)
   screens/                      telas: início, editar rádio, gravações,
-                                rádios sugeridas, sincronizar celulares
+                                rádios sugeridas, sincronizar celulares,
+                                backup e restauração
   widgets/                      cartão "tocando agora", logo, formatação
 android_overlay/                manifesto Android (serviço de áudio + Android Auto)
 tool/patch_android.py           ajusta a pasta android/ durante o build
 assets/                         ícone do app
 ```
 
-Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Auto), `image_picker` (galeria).
+Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Auto), `image_picker` (galeria), `file_picker` (backup), `open_filex` (instalar atualização).
 
 ## Histórico
 
+- **1.3.0** – atualização pelo próprio app (avisa, baixa e instala com autorização) e tela de Backup e restauração (salvar no celular, compartilhar, restaurar substituindo ou juntando).
 - **1.2.0** – logo automático: escolher da galeria ou colar link, com conversão para logo pequeno guardado na rádio (aparece também na notificação e no carro).
 - **1.1.0** – banco Firebase: sincronização da lista entre celulares por código, rádios sugeridas (lista pública) e modo administrador para publicar.
 - **1.0.0** – primeira versão: lista de rádios, segundo plano, reconexão, nome da música, timer, gravação, Android Auto, importar/exportar.
