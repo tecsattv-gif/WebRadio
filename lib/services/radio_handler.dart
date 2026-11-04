@@ -9,6 +9,7 @@ import '../models/station.dart';
 import 'recorder.dart';
 import 'station_store.dart';
 import 'stream_resolver.dart';
+import 'sync_service.dart';
 
 enum RadioStatus { idle, connecting, playing, paused, reconnecting, error }
 
@@ -19,6 +20,7 @@ class RadioHandler extends BaseAudioHandler {
 
   final AudioPlayer _player = AudioPlayer();
   final Recorder recorder = Recorder();
+  final SyncService sync = SyncService();
 
   final ValueNotifier<List<Station>> stations = ValueNotifier(const []);
   final ValueNotifier<Station?> current = ValueNotifier(null);
@@ -54,6 +56,11 @@ class RadioHandler extends BaseAudioHandler {
         }
       }
     }
+
+    await sync.init();
+    sync.currentList = () => stations.value;
+    sync.onRemoteList = applySyncedList;
+    unawaited(sync.syncNow());
 
     _player.playbackEventStream.listen(
       (_) => _broadcast(),
@@ -502,6 +509,24 @@ class RadioHandler extends BaseAudioHandler {
   Future<void> _persist() async {
     await StationStore.save(stations.value);
     _publishQueue();
+    unawaited(sync.markLocalChange());
+  }
+
+  /// Lista que veio de outro celular (sincronização): substitui a deste.
+  void applySyncedList(List<Station> list) {
+    stations.value = List.unmodifiable(list);
+    unawaited(StationStore.save(list));
+    _publishQueue();
+    final c = current.value;
+    if (c != null) {
+      for (final s in list) {
+        if (s.id == c.id) {
+          current.value = s;
+          break;
+        }
+      }
+    }
+    _broadcast();
   }
 
   void _publishQueue() {

@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 
 import 'screens/home_screen.dart';
+import 'services/firebase_api.dart';
 import 'services/radio_handler.dart';
 
 late final RadioHandler radio;
@@ -17,6 +18,7 @@ Future<void> main() async {
       androidStopForegroundOnPause: true,
     ),
   );
+  await FirebaseApi.init();
   await radio.init();
   runApp(const WebRadioApp());
 }

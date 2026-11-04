@@ -2,7 +2,7 @@
 
 App Android para ouvir **as suas rádios** pela internet: você monta a sua lista com os links de streaming e o app toca em segundo plano, com controles na notificação, na tela de bloqueio, no fone e no **Android Auto**.
 
-Versão atual: **1.0.0**
+Versão atual: **1.1.0**
 
 ## Funções
 
@@ -15,13 +15,43 @@ Versão atual: **1.0.0**
 - **Timer para desligar**: 15, 30, 45 min, 1 h, 1 h 30, 2 h ou tempo livre; o volume baixa aos poucos nos últimos 20 segundos.
 - **Gravar a rádio**: grava a transmissão direto em arquivo (MP3/AAC/OGG, sem perder qualidade). Tela **Gravações** para ouvir, compartilhar/salvar e apagar.
 - **Android Auto**: aparece como app de mídia, com a pasta "Minhas rádios", próxima/anterior e comando de voz ("tocar <nome da rádio> no WebRádio").
+- **Sincronizar celulares** (menu ⋮): crie um código num celular e digite o mesmo código nos outros; a lista de rádios fica igual em todos (vale a alteração mais recente). Sincroniza ao abrir o app, ao voltar para ele e a cada mudança.
+- **Rádios sugeridas** (menu ⋮): lista pública publicada pelo administrador. Qualquer usuário busca e adiciona à própria lista com um toque.
+- **Modo administrador** (Rádios sugeridas > ⋮ > Entrar como administrador): com o e-mail tecsattv@gmail.com e a senha cadastrada no Firebase, publica rádios da própria lista e remove sugeridas (segurar a rádio).
 - **Importar / Exportar** a lista (arquivo JSON ou texto "Nome | link", uma rádio por linha, também aceita M3U).
 - Tela **Sobre** com a versão e os créditos.
+
+## Firebase (banco online)
+
+Projeto **WebRadio001** (`webradio001-c911b`), plano Spark (grátis). O app usa a API REST do Firestore e do Authentication (sem SDK nativo).
+
+- `radios_publicas/{id}`: rádios sugeridas (campos `name`, `url`, `genre`, `logoUrl`, `criado`). Leitura pública; gravação só do administrador.
+- `listas/{codigo}`: lista sincronizada de cada código (campos `dados` = JSON das rádios, `atualizado` = hora em ms).
+- Authentication: provedor **E-mail/senha**, usuário administrador tecsattv@gmail.com. A senha não fica no código.
+
+Regras do Firestore:
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /radios_publicas/{id} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.email == 'tecsattv@gmail.com';
+    }
+    match /listas/{codigo} {
+      allow read, write: if codigo.size() >= 12;
+    }
+  }
+}
+```
 
 ## Limitações
 
 - Rádios em **HLS (.m3u8)** tocam, mas **não dá para gravar**.
 - A gravação continua enquanto a rádio estiver tocando. Se pausar e deixar o app em segundo plano por muito tempo, o Android pode encerrar a gravação.
+- Quem tiver o código de sincronização vê e altera a lista: só passe para quem você quiser.
 - As gravações ficam na pasta interna do app (`Android/data/com.tecsattv.webradio/files/Gravacoes`). Para levar para outro lugar use **Compartilhar / salvar**.
 - **Android Auto com APK instalado fora da Play Store**: no app Android Auto do celular, toque 10 vezes em "Versão" para ativar o modo desenvolvedor, depois nos três pontinhos > Configurações do desenvolvedor > marque **Fontes desconhecidas**. Sem isso o WebRádio não aparece no painel.
 
@@ -58,7 +88,10 @@ lib/
   services/recorder.dart        gravação da transmissão
   services/station_store.dart   lista salva no telefone, importar/exportar
   services/stream_resolver.dart links .pls/.m3u e teste de link
-  screens/                      telas: início, editar rádio, gravações
+  services/firebase_api.dart    Firestore/Authentication (REST)
+  services/sync_service.dart    sincronização da lista entre celulares
+  screens/                      telas: início, editar rádio, gravações,
+                                rádios sugeridas, sincronizar celulares
   widgets/                      cartão "tocando agora", logo, formatação
 android_overlay/                manifesto Android (serviço de áudio + Android Auto)
 tool/patch_android.py           ajusta a pasta android/ durante o build
@@ -69,6 +102,7 @@ Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Aut
 
 ## Histórico
 
+- **1.1.0** – banco Firebase: sincronização da lista entre celulares por código, rádios sugeridas (lista pública) e modo administrador para publicar.
 - **1.0.0** – primeira versão: lista de rádios, segundo plano, reconexão, nome da música, timer, gravação, Android Auto, importar/exportar.
 
 ---

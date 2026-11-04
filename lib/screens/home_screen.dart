@@ -12,10 +12,32 @@ import '../services/station_store.dart';
 import '../widgets/now_playing_card.dart';
 import '../widgets/station_logo.dart';
 import 'recordings_screen.dart';
+import 'suggested_screen.dart';
+import 'sync_screen.dart';
 import 'station_edit_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    // Ao voltar para o app, pega as mudanças feitas em outro celular.
+    _lifecycle = AppLifecycleListener(onResume: () => radio.sync.syncNow());
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +62,9 @@ class HomeScreen extends StatelessWidget {
           PopupMenuButton<String>(
             onSelected: (v) => _onMenu(context, v),
             itemBuilder: (_) => const [
+              PopupMenuItem(value: 'suggested', child: Text('Rádios sugeridas')),
+              PopupMenuItem(value: 'sync', child: Text('Sincronizar celulares')),
+              PopupMenuDivider(),
               PopupMenuItem(value: 'import', child: Text('Importar rádios')),
               PopupMenuItem(value: 'export', child: Text('Exportar minha lista')),
               PopupMenuItem(value: 'about', child: Text('Sobre')),
@@ -81,6 +106,12 @@ class HomeScreen extends StatelessWidget {
 
   Future<void> _onMenu(BuildContext context, String value) async {
     switch (value) {
+      case 'suggested':
+        await Navigator.push(
+            context, MaterialPageRoute(builder: (_) => const SuggestedScreen()));
+      case 'sync':
+        await Navigator.push(
+            context, MaterialPageRoute(builder: (_) => const SyncScreen()));
       case 'import':
         await _import(context);
       case 'export':
@@ -278,6 +309,21 @@ class _EmptyState extends StatelessWidget {
               'Toque em "+ Rádio" e cole o link do streaming da rádio que você quer ouvir.',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white70),
+            ),
+            const SizedBox(height: 20),
+            FilledButton.icon(
+              onPressed: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => const SuggestedScreen())),
+              icon: const Icon(Icons.explore_outlined),
+              label: const Text('Ver rádios sugeridas'),
+              style: FilledButton.styleFrom(foregroundColor: Colors.black),
+            ),
+            const SizedBox(height: 8),
+            TextButton.icon(
+              onPressed: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => const SyncScreen())),
+              icon: const Icon(Icons.sync),
+              label: const Text('Tenho um código de sincronização'),
             ),
           ],
         ),
