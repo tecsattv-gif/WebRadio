@@ -5,6 +5,7 @@ import '../main.dart';
 import '../models/station.dart';
 import '../services/radio_handler.dart';
 import '../widgets/equalizer.dart';
+import '../widgets/genre_chips.dart';
 import '../widgets/now_playing_card.dart';
 import '../widgets/station_logo.dart';
 import '../services/update_service.dart';
@@ -23,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late final AppLifecycleListener _lifecycle;
+  String? _genre; // filtro de gênero (null = todas)
 
   @override
   void initState() {
@@ -104,18 +106,45 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
+              GenreChips(
+                stations: list,
+                selected: _genre,
+                onSelected: (g) => setState(() => _genre = g),
+              ),
               Expanded(
-                child: ReorderableListView.builder(
-                  buildDefaultDragHandles: false,
-                  padding: const EdgeInsets.only(top: 4, bottom: 100),
-                  itemCount: list.length,
-                  onReorder: (a, b) => radio.reorder(a, b),
-                  itemBuilder: (context, i) => _StationTile(
-                    key: ValueKey(list[i].id),
-                    station: list[i],
-                    index: i,
-                  ),
-                ),
+                child: Builder(builder: (context) {
+                  final g = _genre;
+                  // Gênero escolhido sumiu da lista: volta para "Todas".
+                  if (g != null && !list.any((s) => genreKey(s) == g)) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) setState(() => _genre = null);
+                    });
+                  }
+                  if (g == null) {
+                    return ReorderableListView.builder(
+                      buildDefaultDragHandles: false,
+                      padding: const EdgeInsets.only(top: 4, bottom: 100),
+                      itemCount: list.length,
+                      onReorder: (a, b) => radio.reorder(a, b),
+                      itemBuilder: (context, i) => _StationTile(
+                        key: ValueKey(list[i].id),
+                        station: list[i],
+                        index: i,
+                      ),
+                    );
+                  }
+                  final filtered = list.where((s) => genreKey(s) == g).toList();
+                  return ListView.builder(
+                    padding: const EdgeInsets.only(top: 4, bottom: 100),
+                    itemCount: filtered.length,
+                    itemBuilder: (context, i) => _StationTile(
+                      key: ValueKey(filtered[i].id),
+                      station: filtered[i],
+                      index: i,
+                      reorderable: false,
+                    ),
+                  );
+                }),
               ),
             ],
           );
@@ -162,8 +191,14 @@ class _HomeScreenState extends State<HomeScreen> {
 class _StationTile extends StatelessWidget {
   final Station station;
   final int index;
+  final bool reorderable;
 
-  const _StationTile({super.key, required this.station, required this.index});
+  const _StationTile({
+    super.key,
+    required this.station,
+    required this.index,
+    this.reorderable = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -223,13 +258,16 @@ class _StationTile extends StatelessWidget {
                       PopupMenuItem(value: 'delete', child: Text('Excluir')),
                     ],
                   ),
-                  ReorderableDragStartListener(
-                    index: index,
-                    child: const Padding(
-                      padding: EdgeInsets.fromLTRB(4, 12, 12, 12),
-                      child: Icon(Icons.drag_handle_rounded, color: Colors.white38),
-                    ),
-                  ),
+                  if (reorderable)
+                    ReorderableDragStartListener(
+                      index: index,
+                      child: const Padding(
+                        padding: EdgeInsets.fromLTRB(4, 12, 12, 12),
+                        child: Icon(Icons.drag_handle_rounded, color: Colors.white38),
+                      ),
+                    )
+                  else
+                    const SizedBox(width: 8),
                 ],
               ),
               onTap: () {

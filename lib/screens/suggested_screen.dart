@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import '../models/station.dart';
 import '../services/firebase_api.dart';
+import '../widgets/genre_chips.dart';
 import '../widgets/station_logo.dart';
 
 /// Rádios sugeridas (lista pública publicada pelo administrador).
@@ -17,6 +18,7 @@ class _SuggestedScreenState extends State<SuggestedScreen> {
   List<Station>? _items;
   String? _error;
   String _filter = '';
+  String? _genre;
 
   @override
   void initState() {
@@ -183,6 +185,7 @@ class _SuggestedScreenState extends State<SuggestedScreen> {
       valueListenable: FirebaseApi.isAdmin,
       builder: (context, admin, _) {
         final items = (_items ?? [])
+            .where((s) => _genre == null || genreKey(s) == _genre)
             .where((s) =>
                 _filter.isEmpty ||
                 s.name.toLowerCase().contains(_filter) ||
@@ -231,6 +234,11 @@ class _SuggestedScreenState extends State<SuggestedScreen> {
                             isDense: true,
                           ),
                         ),
+                      ),
+                      GenreChips(
+                        stations: _items ?? const [],
+                        selected: _genre,
+                        onSelected: (g) => setState(() => _genre = g),
                       ),
                       if (admin)
                         const Padding(

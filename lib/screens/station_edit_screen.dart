@@ -5,6 +5,7 @@ import '../main.dart';
 import '../models/station.dart';
 import '../services/logo_converter.dart';
 import '../services/stream_resolver.dart';
+import '../widgets/genre_chips.dart';
 import '../widgets/station_logo.dart';
 
 Future<void> openStationEditor(BuildContext context, Station? station) {
@@ -42,6 +43,7 @@ class _StationEditScreenState extends State<StationEditScreen> {
   late final TextEditingController _name;
   late final TextEditingController _url;
   late final TextEditingController _genre;
+  final FocusNode _genreFocus = FocusNode();
   late final TextEditingController _logo;
   bool _testing = false;
   String? _testResult;
@@ -138,6 +140,7 @@ class _StationEditScreenState extends State<StationEditScreen> {
     _name.dispose();
     _url.dispose();
     _genre.dispose();
+    _genreFocus.dispose();
     _logo.dispose();
     super.dispose();
   }
@@ -276,15 +279,53 @@ class _StationEditScreenState extends State<StationEditScreen> {
                 ],
               ),
               const SizedBox(height: 18),
-              TextFormField(
-                controller: _genre,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  labelText: 'Gênero / cidade (opcional)',
-                  hintText: 'Sertanejo, Notícias, São Paulo…',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.label_outline),
+              RawAutocomplete<String>(
+                textEditingController: _genre,
+                focusNode: _genreFocus,
+                optionsBuilder: (value) {
+                  final q = value.text.trim().toLowerCase();
+                  final all = genresOf(radio.stations.value)
+                      .where((g) => g.$1 != kNoGenre)
+                      .map((g) => g.$2);
+                  return all.where((g) =>
+                      g.toLowerCase().contains(q) && g.toLowerCase() != q);
+                },
+                fieldViewBuilder: (context, controller, focus, onSubmit) => TextFormField(
+                  controller: controller,
+                  focusNode: focus,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: const InputDecoration(
+                    labelText: 'Gênero (opcional)',
+                    hintText: 'Sertanejo raiz, Notícias, Gospel…',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.label_outline),
+                  ),
                 ),
+                optionsViewBuilder: (context, onSelected, options) => Align(
+                  alignment: Alignment.topLeft,
+                  child: Material(
+                    color: const Color(0xFF221A14),
+                    elevation: 6,
+                    borderRadius: BorderRadius.circular(12),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 220, maxWidth: 320),
+                      child: ListView(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        children: [
+                          for (final o in options)
+                            ListTile(
+                              dense: true,
+                              leading: const Icon(Icons.label_outline, size: 18),
+                              title: Text(o),
+                              onTap: () => onSelected(o),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               ),
               const SizedBox(height: 14),
               const Text('Logo (opcional)',
