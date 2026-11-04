@@ -40,7 +40,7 @@ jobs:
             [ -z "$RAW" ] && continue
             KP=$(printf '%s' "$RAW" | tr -d ' \r\n\t')
             echo "::add-mask::$KP"
-            echo "Testando segredo com ${#KP} caracteres"
+            echo "::warning::Segredo testado com ${#KP} caracteres (o certo tem 24)"
             if openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 \
                  -in keystore/release.jks.enc -out android/app/release.jks -pass "pass:$KP" 2>/dev/null \
                && keytool -list -keystore android/app/release.jks -storepass "$KP" > /dev/null 2>&1; then
