@@ -259,9 +259,9 @@ class PlayerPanel extends StatelessWidget {
                     SizedBox(height: compactH ? 12 : 24),
                     _controls(playSize),
                     SizedBox(height: compactH ? 10 : 22),
-                    const ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 420),
-                      child: PlayerActionsRow(),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 420),
+                      child: const PlayerActionsRow(),
                     ),
                   ],
                 ),

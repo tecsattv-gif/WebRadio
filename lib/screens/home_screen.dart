@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import '../main.dart';
 import '../models/station.dart';
@@ -9,7 +8,7 @@ import '../widgets/genre_chips.dart';
 import '../widgets/now_playing_card.dart';
 import '../widgets/station_logo.dart';
 import '../services/update_service.dart';
-import 'backup_screen.dart';
+import 'settings_screen.dart';
 import 'player_screen.dart';
 import 'recordings_screen.dart';
 import 'suggested_screen.dart';
@@ -63,16 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
               MaterialPageRoute(builder: (_) => const RecordingsScreen()),
             ),
           ),
-          PopupMenuButton<String>(
-            onSelected: (v) => _onMenu(context, v),
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'suggested', child: Text('Rádios sugeridas')),
-              PopupMenuItem(value: 'sync', child: Text('Sincronizar celulares')),
-              PopupMenuItem(value: 'backup', child: Text('Backup e restauração')),
-              PopupMenuDivider(),
-              PopupMenuItem(value: 'update', child: Text('Procurar atualização')),
-              PopupMenuItem(value: 'about', child: Text('Sobre')),
-            ],
+          IconButton(
+            tooltip: 'Configurações',
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => SettingsScreen.open(context),
           ),
         ],
       ),
@@ -171,39 +164,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> _onMenu(BuildContext context, String value) async {
-    switch (value) {
-      case 'suggested':
-        await Navigator.push(
-            context, MaterialPageRoute(builder: (_) => const SuggestedScreen()));
-      case 'sync':
-        await Navigator.push(
-            context, MaterialPageRoute(builder: (_) => const SyncScreen()));
-      case 'backup':
-        await Navigator.push(
-            context, MaterialPageRoute(builder: (_) => const BackupScreen()));
-      case 'update':
-        await UpdateService.checkManually(context);
-      case 'about':
-        await _about(context);
-    }
-  }
-
-  Future<void> _about(BuildContext context) async {
-    final info = await PackageInfo.fromPlatform();
-    if (!context.mounted) return;
-    showAboutDialog(
-      context: context,
-      applicationName: 'WebRádio',
-      applicationVersion: 'Versão ${info.version}',
-      applicationIcon: const Icon(Icons.radio_rounded, size: 40, color: Color(0xFFFF8A1F)),
-      children: const [
-        SizedBox(height: 8),
-        Text('Criado por Luiz Alberto Cardoso'),
-        Text('tecsattv@gmail.com'),
-      ],
-    );
-  }
 }
 
 class _StationTile extends StatelessWidget {
@@ -329,11 +289,17 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             FilledButton.icon(
+              onPressed: () => SettingsScreen.open(context),
+              icon: const Icon(Icons.travel_explore),
+              label: const Text('Buscar rádios'),
+              style: FilledButton.styleFrom(foregroundColor: Colors.black),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
               onPressed: () => Navigator.push(
                   context, MaterialPageRoute(builder: (_) => const SuggestedScreen())),
               icon: const Icon(Icons.explore_outlined),
               label: const Text('Ver rádios sugeridas'),
-              style: FilledButton.styleFrom(foregroundColor: Colors.black),
             ),
             const SizedBox(height: 8),
             TextButton.icon(

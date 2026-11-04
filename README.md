@@ -2,12 +2,15 @@
 
 App Android para ouvir **as suas rádios** pela internet: você monta a sua lista com os links de streaming e o app toca em segundo plano, com controles na notificação, na tela de bloqueio, no fone e no **Android Auto**.
 
-Versão atual: **1.6.0**
+Versão atual: **1.7.0**
 
 ## Funções
 
 - **Visual**: tela de abertura (2,5 s) com versão e créditos; cartão "tocando agora" com a cor tirada do logo da rádio; equalizador animado quando está ao vivo; **player em tela cheia** (toque no cartão) com logo grande e controles.
 - **Separar por gênero**: botões de gênero em cima da lista (Todas, Sertanejo, Podcast…), com a quantidade de rádios de cada um; também nas Rádios sugeridas. O campo Gênero do cadastro sugere os gêneros já usados. Com um gênero escolhido a lista não reordena (volte em "Todas" para arrastar).
+- **Configurações** (engrenagem no topo), com duas abas:
+  - **Buscar rádios**: busca no diretório gratuito Radio Browser por nome, estilo (Sertanejo, Gospel, Notícias, Forró…) e país (Brasil por padrão). Toque no ▶ para ouvir antes e no + para adicionar à lista — o app já traz o logo (convertido) e o gênero.
+  - **Geral**: Rádios sugeridas, Sincronizar celulares, Backup e restauração, Gravações, Procurar atualização e Sobre.
 - **Tela deitada e tablet**: em telas largas (central multimídia Android do carro, tablet, celular deitado) a tela inicial se divide em duas: player grande à esquerda e lista de rádios à direita. O player em tela cheia também tem versão deitada (logo de um lado, controles do outro). Em tablet em pé, o conteúdo e os formulários ficam centralizados.
 - **Central multimídia do carro**: instala como em qualquer Android 7+ (baixe o APK em Releases pelo navegador da central ou copie por pendrive). Os botões de mídia do volante funcionam se a central repassar os botões padrão do Android.
 - **Minha lista de rádios**: adicionar, editar, excluir e reordenar (arraste pela alça ☰). Nome, link do streaming, gênero/cidade e logo (opcional).
@@ -20,12 +23,12 @@ Versão atual: **1.6.0**
 - **Timer para desligar**: 15, 30, 45 min, 1 h, 1 h 30, 2 h ou tempo livre; o volume baixa aos poucos nos últimos 20 segundos.
 - **Gravar a rádio**: grava a transmissão direto em arquivo (MP3/AAC/OGG, sem perder qualidade). Tela **Gravações** para ouvir, compartilhar/salvar e apagar.
 - **Android Auto**: aparece como app de mídia, com a pasta "Minhas rádios", próxima/anterior e comando de voz ("tocar <nome da rádio> no WebRádio").
-- **Sincronizar celulares** (menu ⋮): crie um código num celular e digite o mesmo código nos outros; a lista de rádios fica igual em todos (vale a alteração mais recente). Sincroniza ao abrir o app, ao voltar para ele e a cada mudança.
-- **Rádios sugeridas** (menu ⋮): lista pública publicada pelo administrador. Qualquer usuário busca e adiciona à própria lista com um toque.
+- **Sincronizar celulares** (Configurações > Geral): crie um código num celular e digite o mesmo código nos outros; a lista de rádios fica igual em todos (vale a alteração mais recente). Sincroniza ao abrir o app, ao voltar para ele e a cada mudança.
+- **Rádios sugeridas** (Configurações > Geral): lista pública publicada pelo administrador. Qualquer usuário busca e adiciona à própria lista com um toque.
 - **Modo administrador** (Rádios sugeridas > ⋮ > Entrar como administrador): com o e-mail tecsattv@gmail.com e a senha cadastrada no Firebase, publica rádios da própria lista e remove sugeridas (segurar a rádio).
-- **Backup e restauração** (menu ⋮): salvar o backup no celular (você escolhe a pasta; mesmo nome substitui o anterior), compartilhar (Drive, WhatsApp, e-mail) e restaurar, substituindo a lista ou só juntando as rádios que faltam. O backup leva as rádios com os logos; as gravações não entram.
+- **Backup e restauração** (Configurações > Geral): salvar o backup no celular (você escolhe a pasta; mesmo nome substitui o anterior), compartilhar (Drive, WhatsApp, e-mail) e restaurar, substituindo a lista ou só juntando as rádios que faltam. O backup leva as rádios com os logos; as gravações não entram.
 - **Importar links** (em Backup e restauração): colar texto "Nome | link", uma rádio por linha, ou M3U.
-- **Atualização pelo próprio app**: ao abrir, o app confere a última versão nas Releases do GitHub, pergunta se quer atualizar, baixa o APK e abre o instalador. Também em menu ⋮ > Procurar atualização. Na primeira vez o Android pede para permitir "Instalar apps desconhecidos" para o WebRádio.
+- **Atualização pelo próprio app**: ao abrir, o app confere a última versão nas Releases do GitHub, pergunta se quer atualizar, baixa o APK e abre o instalador. Também em Configurações > Geral > Procurar atualização. Na primeira vez o Android pede para permitir "Instalar apps desconhecidos" para o WebRádio.
 - Tela **Sobre** com a versão e os créditos.
 
 ## Firebase (banco online)
@@ -97,6 +100,9 @@ lib/
   services/firebase_api.dart    Firestore/Authentication (REST)
   services/sync_service.dart    sincronização da lista entre celulares
   services/logo_converter.dart  converte link/galeria em logo PNG pequeno
+  services/radio_browser.dart   busca no diretório Radio Browser
+  screens/settings_screen.dart  Configurações (abas Buscar rádios e Geral)
+  screens/radio_search_tab.dart aba Buscar rádios
   services/update_service.dart  atualização pelo app (Releases do GitHub)
   screens/player_screen.dart    player em tela cheia
   screens/splash_screen.dart    abertura com créditos
@@ -116,6 +122,7 @@ Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Aut
 
 ## Histórico
 
+- **1.7.0** – Configurações com aba **Buscar rádios** (Radio Browser: nome, estilo, país, ouvir antes, adicionar com logo) e aba **Geral**; inclui o layout para tela deitada/tablet da 1.6.0 (que não chegou a ser publicada).
 - **1.6.0** – layout para tela deitada e tablet: tela inicial dividida (player + lista), player em tela cheia deitado, formulários centralizados, abertura ajustada.
 - **1.5.1** – corrige a tela de abertura desalinhada (fundo agora ocupa a tela toda, conteúdo centralizado).
 - **1.5.0** – separar por gênero: botões de filtro na lista e nas sugeridas; sugestão de gêneros já usados no cadastro.
