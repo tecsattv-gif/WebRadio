@@ -68,14 +68,13 @@ O APK é gerado automaticamente pelo GitHub Actions a cada envio para a branch `
 
 ### Chave de assinatura (para as atualizações instalarem por cima)
 
-Cadastre em **Settings > Secrets and variables > Actions**:
+A chave fica no repositório **criptografada** (`keystore/release.jks.enc`). Só a senha abre, guardada como segredo em **Settings > Secrets and variables > Actions**:
 
 | Nome | Valor |
 |---|---|
-| `WEBRADIO_KEYSTORE` | chave em base64 (arquivo `segredos-github-webradio.txt`) |
-| `WEBRADIO_KEYSTORE_PASSWORD` | senha da chave (mesmo arquivo) |
+| `WEBRADIO_KEYSTORE_PASSWORD` | senha da chave (arquivo `segredos-github-webradio.txt`) |
 
-Sem esses segredos o APK é gerado com chave de teste, e cada versão nova exige desinstalar a anterior.
+Sem esse segredo o APK é gerado com chave de teste, e cada versão nova exige desinstalar a anterior. O segredo `WEBRADIO_KEYSTORE` não é mais usado.
 
 ### Nova versão
 
