@@ -326,7 +326,6 @@ class _StationEditScreenState extends State<StationEditScreen> {
                   ),
                 ),
               ),
-              ),
               const SizedBox(height: 14),
               const Text('Logo (opcional)',
                   style: TextStyle(fontWeight: FontWeight.w700)),
