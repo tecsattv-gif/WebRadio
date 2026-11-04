@@ -2,12 +2,13 @@
 
 App Android para ouvir **as suas rádios** pela internet: você monta a sua lista com os links de streaming e o app toca em segundo plano, com controles na notificação, na tela de bloqueio, no fone e no **Android Auto**.
 
-Versão atual: **1.7.0**
+Versão atual: **1.7.1**
 
 ## Funções
 
 - **Visual**: tela de abertura (2,5 s) com versão e créditos; cartão "tocando agora" com a cor tirada do logo da rádio; equalizador animado quando está ao vivo; **player em tela cheia** (toque no cartão) com logo grande e controles.
 - **Separar por gênero**: botões de gênero em cima da lista (Todas, Sertanejo, Podcast…), com a quantidade de rádios de cada um; também nas Rádios sugeridas. O campo Gênero do cadastro sugere os gêneros já usados. Com um gênero escolhido a lista não reordena (volte em "Todas" para arrastar).
+- **Bluetooth**: ícone discreto no topo (tela inicial e player em tela cheia) que abre as configurações de Bluetooth do Android para conectar caixa de som, fone ou o carro. O Android não permite que apps liguem o Bluetooth sozinhos.
 - **Configurações** (engrenagem no topo), com duas abas:
   - **Buscar rádios**: busca no diretório gratuito Radio Browser por nome, estilo (Sertanejo, Gospel, Notícias, Forró…) e país (Brasil por padrão). Toque no ▶ para ouvir antes e no + para adicionar à lista — o app já traz o logo (convertido) e o gênero.
   - **Geral**: Rádios sugeridas, Sincronizar celulares, Backup e restauração, Gravações, Procurar atualização e Sobre.
@@ -108,6 +109,7 @@ lib/
   screens/splash_screen.dart    abertura com créditos
   widgets/station_colors.dart   cor de cada rádio tirada do logo
   widgets/equalizer.dart        equalizador animado
+  widgets/bluetooth_button.dart atalho para o Bluetooth do Android
   widgets/genre_chips.dart      botões de gênero (filtro)
   screens/                      telas: início, editar rádio, gravações,
                                 rádios sugeridas, sincronizar celulares,
@@ -118,10 +120,11 @@ tool/patch_android.py           ajusta a pasta android/ durante o build
 assets/                         ícone do app
 ```
 
-Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Auto), `image_picker` (galeria), `file_picker` (backup), `open_filex` (instalar atualização).
+Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Auto), `image_picker` (galeria), `file_picker` (backup), `open_filex` (instalar atualização), `app_settings` (atalho do Bluetooth).
 
 ## Histórico
 
+- **1.7.1** – botão discreto de Bluetooth no topo (abre as configurações de Bluetooth do Android).
 - **1.7.0** – Configurações com aba **Buscar rádios** (Radio Browser: nome, estilo, país, ouvir antes, adicionar com logo) e aba **Geral**; inclui o layout para tela deitada/tablet da 1.6.0 (que não chegou a ser publicada).
 - **1.6.0** – layout para tela deitada e tablet: tela inicial dividida (player + lista), player em tela cheia deitado, formulários centralizados, abertura ajustada.
 - **1.5.1** – corrige a tela de abertura desalinhada (fundo agora ocupa a tela toda, conteúdo centralizado).

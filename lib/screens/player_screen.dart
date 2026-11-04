@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../main.dart';
 import '../services/radio_handler.dart';
+import '../widgets/bluetooth_button.dart';
 import '../widgets/now_playing_card.dart';
 import '../widgets/station_colors.dart';
 import '../widgets/station_logo.dart';
@@ -44,6 +45,7 @@ class PlayerScreen extends StatelessWidget {
         title: const Text('Tocando agora',
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
         centerTitle: true,
+        actions: const [BluetoothButton(), SizedBox(width: 4)],
       ),
       body: const PlayerPanel(topPadding: 56),
     );

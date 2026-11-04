@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import '../models/station.dart';
 import '../services/radio_handler.dart';
+import '../widgets/bluetooth_button.dart';
 import '../widgets/equalizer.dart';
 import '../widgets/genre_chips.dart';
 import '../widgets/now_playing_card.dart';
@@ -54,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
+          const BluetoothButton(),
           IconButton(
             tooltip: 'Gravações',
             icon: const Icon(Icons.library_music_outlined),
