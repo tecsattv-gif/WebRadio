@@ -32,9 +32,22 @@ jobs:
       - name: Chave de assinatura
         env:
           KS: ${{ secrets.WEBRADIO_KEYSTORE }}
+          KP: ${{ secrets.WEBRADIO_KEYSTORE_PASSWORD }}
         run: |
           if [ -n "$KS" ]; then
-            echo "$KS" | base64 -d > android/app/release.jks
+            # tolera espaços e quebras de linha coladas junto
+            printf '%s' "$KS" | tr -d ' \r\n\t' > ks.b64
+            echo "Tamanho do segredo: $(wc -c < ks.b64) caracteres"
+            if ! base64 -d ks.b64 > android/app/release.jks 2>/dev/null; then
+              echo "::error::O segredo WEBRADIO_KEYSTORE não é um base64 válido. Cole de novo só a linha grande do arquivo."
+              exit 1
+            fi
+            rm ks.b64
+            if ! keytool -list -keystore android/app/release.jks -storepass "$KP" > /dev/null 2>&1; then
+              echo "::error::A senha (WEBRADIO_KEYSTORE_PASSWORD) não abre a chave. Confira os dois segredos."
+              exit 1
+            fi
+            echo "Chave de assinatura OK"
           fi
 
       - name: Ajustar Android (Android Auto, player, assinatura)
