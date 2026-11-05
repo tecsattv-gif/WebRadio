@@ -71,7 +71,8 @@ void _showBalloon(BuildContext anchor, String text) {
   final overlay = appNavigatorKey.currentState?.overlay ?? Overlay.maybeOf(anchor);
   final box = anchor.findRenderObject() as RenderBox?;
   if (overlay == null || box == null || !box.attached) return;
-  final pos = box.localToGlobal(Offset.zero, ancestor: overlay.context.findRenderObject());
+  // A camada do Navigator ocupa a tela toda: posição global serve.
+  final pos = box.localToGlobal(Offset.zero);
   final screenW = MediaQuery.sizeOf(anchor).width;
   _balloonTimer?.cancel();
   _balloonEntry?.remove();
