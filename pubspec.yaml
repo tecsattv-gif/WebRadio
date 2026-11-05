@@ -3,7 +3,7 @@ description: "WebRádio - ouça as rádios da sua lista, com timer, gravação e
 publish_to: 'none'
 
 # Versão mostrada no app (formato 1.0.0). Suba à mão a cada mudança: 1.1.0, 1.2.0...
-version: 1.8.5+18
+version: 1.8.6+19
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -30,6 +30,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/default_stations.json
 
 flutter_launcher_icons:
   android: true

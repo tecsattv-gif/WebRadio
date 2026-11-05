@@ -30,6 +30,7 @@ Versão atual: **1.8.5**
 - **Sincronizar celulares** (Configurações > Geral): crie um código num celular e digite o mesmo código nos outros; a lista de rádios fica igual em todos (vale a alteração mais recente). Sincroniza ao abrir o app, ao voltar para ele e a cada mudança.
 - **Rádios sugeridas** (Configurações > Geral): lista pública publicada pelo administrador. Qualquer usuário busca e adiciona à própria lista com um toque.
 - **Modo administrador** (Rádios sugeridas > ⋮ > Entrar como administrador): com o e-mail tecsattv@gmail.com e a senha cadastrada no Firebase, publica rádios da própria lista e remove sugeridas (segurar a rádio).
+- **Rádios já instaladas** (1.8.6): quem instala o app pela primeira vez já encontra a lista padrão de 24 rádios (com gêneros e logos), tirada de um backup do app e guardada em `assets/default_stations.json`. Só vale na primeira abertura: quem já tem o app continua com a própria lista, e quem apagar todas as rádios não recebe a lista de volta. Para trocar a lista padrão, substitua esse arquivo por um backup novo e gere uma versão.
 - **Backup e restauração** (Configurações > Geral): salvar o backup no celular (você escolhe a pasta; mesmo nome substitui o anterior), compartilhar (Drive, WhatsApp, e-mail) e restaurar, substituindo a lista ou só juntando as rádios que faltam. O backup leva as rádios com os logos; as gravações não entram.
 - **Importar links** (em Backup e restauração): colar texto "Nome | link", uma rádio por linha, ou M3U.
 - **Atualização pelo próprio app**: ao abrir, o app confere a última versão nas Releases do GitHub, pergunta se quer atualizar, baixa o APK e abre o instalador. Também em Configurações > Geral > Procurar atualização. Na primeira vez o Android pede para permitir "Instalar apps desconhecidos" para o WebRádio.
@@ -122,13 +123,14 @@ lib/
   widgets/                      cartão "tocando agora", logo, formatação
 android_overlay/                manifesto Android (serviço de áudio + Android Auto)
 tool/patch_android.py           ajusta a pasta android/ durante o build
-assets/                         ícone do app
+assets/                         ícone do app e lista padrão de rádios (default_stations.json)
 ```
 
 Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Auto), `image_picker` (galeria), `file_picker` (backup), `open_filex` (instalar atualização), `app_settings` (atalho do Bluetooth), `vibration` (vibração do cadeado). A permissão de notificação é pedida direto pelo código Android do app (canal `webradio/notif`).
 
 ## Histórico
 
+- **1.8.6** – o app já vem com 24 rádios na primeira instalação (lista padrão tirada do backup do Luiz).
 - **1.8.5** – publica o pedido de notificação (1.8.3) e o espaço da barra de navegação (1.8.4), que não compilaram; a permissão agora é pedida sem o plugin permission_handler.
 - **1.8.4** – listas (Configurações, Busca, Backup, Sincronizar, Gravações, Sugeridas, tela inicial) deixam espaço para a barra de navegação do Android; o item "Sobre" não fica mais escondido.
 - **1.8.3** – pede a permissão de notificação (necessária para não parar em segundo plano) e mostra aviso enquanto estiver desligada.

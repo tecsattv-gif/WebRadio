@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/station.dart';
@@ -12,7 +13,15 @@ class StationStore {
   static Future<List<Station>> load() async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_kStations);
-    if (raw == null || raw.isEmpty) return [];
+    // 1.8.6: na primeira vez (lista nunca salva) o app já vem com as rádios
+    // da lista padrão (assets/default_stations.json, um backup do app).
+    // Se o usuário apagar todas depois, a lista fica vazia (não volta).
+    if (raw == null) {
+      final defaults = await _loadDefaults();
+      if (defaults.isNotEmpty) await save(defaults);
+      return defaults;
+    }
+    if (raw.isEmpty) return [];
     try {
       final list = jsonDecode(raw) as List<dynamic>;
       return list
@@ -20,6 +29,15 @@ class StationStore {
           .map(Station.fromJson)
           .where((s) => s.url.isNotEmpty)
           .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  static Future<List<Station>> _loadDefaults() async {
+    try {
+      final text = await rootBundle.loadString('assets/default_stations.json');
+      return parseImport(text);
     } catch (_) {
       return [];
     }
