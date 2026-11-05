@@ -33,6 +33,32 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : AudioServiceActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        // Permissão de notificação (Android 13+), sem plugin extra
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "webradio/notif")
+            .setMethodCallHandler { call, result ->
+                try {
+                    val needs = android.os.Build.VERSION.SDK_INT >= 33
+                    when (call.method) {
+                        "granted" -> result.success(
+                            !needs || checkSelfPermission("android.permission.POST_NOTIFICATIONS") ==
+                                android.content.pm.PackageManager.PERMISSION_GRANTED)
+                        "request" -> {
+                            if (needs) requestPermissions(arrayOf("android.permission.POST_NOTIFICATIONS"), 7701)
+                            result.success(true)
+                        }
+                        "settings" -> {
+                            val i = android.content.Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                                .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, packageName)
+                                .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                            startActivity(i)
+                            result.success(true)
+                        }
+                        else -> result.notImplemented()
+                    }
+                } catch (e: Exception) {
+                    result.success(false)
+                }
+            }
         // Modo do áudio do Android: 1 = tocando, 2 = em ligação, 3 = chamada de app (WhatsApp...)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "webradio/audio")
             .setMethodCallHandler { call, result ->
