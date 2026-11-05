@@ -71,6 +71,7 @@ class WebRadioApp extends StatelessWidget {
           foregroundColor: Colors.black,
         ),
       ),
+      navigatorKey: appNavigatorKey,
       builder: (context, child) => LockOverlay(child: child ?? const SizedBox()),
       home: const SplashScreen(),
     );
