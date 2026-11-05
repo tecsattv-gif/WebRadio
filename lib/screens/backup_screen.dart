@@ -166,7 +166,8 @@ class BackupScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Backup e restauração')),
       body: ListView(
         padding: EdgeInsets.symmetric(
-            horizontal: sideGutter(MediaQuery.sizeOf(context).width, base: 0), vertical: 8),
+            horizontal: sideGutter(MediaQuery.sizeOf(context).width, base: 0), vertical: 8)
+            .copyWith(bottom: 24 + MediaQuery.paddingOf(context).bottom),
         children: [
           const Padding(
             padding: EdgeInsets.fromLTRB(16, 4, 16, 12),

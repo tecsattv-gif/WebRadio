@@ -2,7 +2,7 @@
 
 App Android para ouvir **as suas rádios** pela internet: você monta a sua lista com os links de streaming e o app toca em segundo plano, com controles na notificação, na tela de bloqueio, no fone e no **Android Auto**.
 
-Versão atual: **1.8.3**
+Versão atual: **1.8.4**
 
 ## Funções
 
@@ -129,6 +129,7 @@ Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Aut
 
 ## Histórico
 
+- **1.8.4** – listas (Configurações, Busca, Backup, Sincronizar, Gravações, Sugeridas, tela inicial) deixam espaço para a barra de navegação do Android; o item "Sobre" não fica mais escondido.
 - **1.8.3** – pede a permissão de notificação (necessária para não parar em segundo plano) e mostra aviso enquanto estiver desligada.
 - **1.8.2** – a rádio não para mais com vídeos/áudios curtos de outros apps: só pausa em ligação de verdade (telefone ou WhatsApp) e retoma ao desligar.
 

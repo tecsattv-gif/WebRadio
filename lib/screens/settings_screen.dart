@@ -90,7 +90,8 @@ class _GeneralTab extends StatelessWidget {
           onTap: onTap,
         );
     return ListView(
-      padding: EdgeInsets.symmetric(horizontal: gutter, vertical: 8),
+      // Espaço para a barra de navegação do Android não cobrir o último item.
+      padding: EdgeInsets.fromLTRB(gutter, 8, gutter, 24 + MediaQuery.paddingOf(context).bottom),
       children: [
         tile(Icons.explore_outlined, 'Rádios sugeridas', 'Lista pública do WebRádio',
             () => _go(context, const SuggestedScreen())),

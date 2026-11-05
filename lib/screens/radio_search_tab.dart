@@ -292,7 +292,7 @@ class _RadioSearchTabState extends State<RadioSearchTab>
         ),
         if (_results != null && _results!.isNotEmpty)
           SliverPadding(
-            padding: EdgeInsets.fromLTRB(gutter - 4, 0, gutter - 4, 24),
+            padding: EdgeInsets.fromLTRB(gutter - 4, 0, gutter - 4, 24 + MediaQuery.paddingOf(context).bottom),
             sliver: SliverList.builder(
               itemCount: _results!.length,
               itemBuilder: (context, i) => _tile(_results![i], scheme),

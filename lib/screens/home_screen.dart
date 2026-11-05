@@ -138,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (g == null) {
                     return ReorderableListView.builder(
                       buildDefaultDragHandles: false,
-                      padding: const EdgeInsets.only(top: 4, bottom: 100),
+                      padding: EdgeInsets.only(top: 4, bottom: 100 + MediaQuery.paddingOf(context).bottom),
                       itemCount: list.length,
                       onReorder: (a, b) => radio.reorder(a, b),
                       itemBuilder: (context, i) => _StationTile(
@@ -150,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                   final filtered = list.where((s) => genreKey(s) == g).toList();
                   return ListView.builder(
-                    padding: const EdgeInsets.only(top: 4, bottom: 100),
+                    padding: EdgeInsets.only(top: 4, bottom: 100 + MediaQuery.paddingOf(context).bottom),
                     itemCount: filtered.length,
                     itemBuilder: (context, i) => _StationTile(
                       key: ValueKey(filtered[i].id),

@@ -221,7 +221,7 @@ class _SuggestedScreenState extends State<SuggestedScreen> {
               : RefreshIndicator(
                   onRefresh: _load,
                   child: ListView(
-                    padding: const EdgeInsets.only(bottom: 96),
+                    padding: EdgeInsets.only(bottom: 96 + MediaQuery.paddingOf(context).bottom),
                     children: [
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),

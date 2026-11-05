@@ -128,7 +128,7 @@ class _RecordingsScreenState extends State<RecordingsScreen> {
                 return RefreshIndicator(
                   onRefresh: _load,
                   child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    padding: EdgeInsets.only(top: 8, bottom: 24 + MediaQuery.paddingOf(context).bottom),
                     itemCount: _files.length,
                     itemBuilder: (context, i) {
                       final f = _files[i];
