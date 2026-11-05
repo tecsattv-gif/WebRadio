@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -308,6 +309,7 @@ class RadioHandler extends BaseAudioHandler {
   }
 
   Future<void> togglePlay() async {
+    _pausedByInterruption = false;
     if (isActive) {
       await pause();
     } else {
@@ -445,6 +447,55 @@ class RadioHandler extends BaseAudioHandler {
     unawaited(_player.setVolume((_fade * _duck).clamp(0.0, 1.0).toDouble()));
   }
 
+  static const _audioChannel = MethodChannel('webradio/audio');
+
+  /// Modo do áudio do Android: 1 = tocando toque, 2 = ligação, 3 = chamada de app.
+  Future<bool> _inCall() async {
+    try {
+      final mode = await _audioChannel.invokeMethod<int>('mode') ?? 0;
+      return mode == 1 || mode == 2 || mode == 3;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<void> _onTransientLoss() async {
+    if (!isActive) return;
+    if (!keepPlayingWithOtherApps.value) {
+      _pausedByInterruption = true;
+      await pause();
+      return;
+    }
+    // O modo de ligação pode demorar um instante para mudar.
+    for (var i = 0; i < 4; i++) {
+      if (await _inCall()) {
+        _pausedByInterruption = true;
+        await pause();
+        _watchCallEnd();
+        return;
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 250));
+    }
+  }
+
+  /// Volta a tocar quando a ligação acabar (caso o aviso de fim não chegue).
+  void _watchCallEnd() {
+    Timer.periodic(const Duration(seconds: 2), (t) async {
+      if (!_pausedByInterruption) {
+        t.cancel();
+        return;
+      }
+      if (!await _inCall()) {
+        t.cancel();
+        if (_pausedByInterruption) {
+          _pausedByInterruption = false;
+          await Future<void>.delayed(const Duration(milliseconds: 800));
+          play();
+        }
+      }
+    });
+  }
+
   Future<void> setKeepPlayingWithOtherApps(bool v) async {
     keepPlayingWithOtherApps.value = v;
     final prefs = await SharedPreferences.getInstance();
@@ -459,11 +510,10 @@ class RadioHandler extends BaseAudioHandler {
           _duck = 0.3;
           _applyVolume();
         case AudioInterruptionType.pause:
-          // Interrupção temporária (ligação, áudio curto): pausa e volta depois.
-          if (isActive) {
-            _pausedByInterruption = true;
-            pause();
-          }
+          // Interrupção temporária. Com "continuar tocando" ligado, só pausa
+          // se for ligação (telefone ou WhatsApp); vídeo/áudio curto de outro
+          // app não para a rádio.
+          _onTransientLoss();
         case AudioInterruptionType.unknown:
           // Outro app pegou o som de vez (vídeo, música, rede social).
           if (!keepPlayingWithOtherApps.value && isActive) {

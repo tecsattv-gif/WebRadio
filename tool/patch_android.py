@@ -33,6 +33,20 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : AudioServiceActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        // Modo do áudio do Android: 1 = tocando, 2 = em ligação, 3 = chamada de app (WhatsApp...)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "webradio/audio")
+            .setMethodCallHandler { call, result ->
+                if (call.method == "mode") {
+                    try {
+                        val am = getSystemService(android.content.Context.AUDIO_SERVICE) as android.media.AudioManager
+                        result.success(am.mode)
+                    } catch (e: Exception) {
+                        result.success(0)
+                    }
+                } else {
+                    result.notImplemented()
+                }
+            }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "webradio/lock")
             .setMethodCallHandler { call, result ->
                 try {

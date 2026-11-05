@@ -2,13 +2,13 @@
 
 App Android para ouvir **as suas rádios** pela internet: você monta a sua lista com os links de streaming e o app toca em segundo plano, com controles na notificação, na tela de bloqueio, no fone e no **Android Auto**.
 
-Versão atual: **1.8.1**
+Versão atual: **1.8.2**
 
 ## Funções
 
 - **Visual**: tela de abertura (2,5 s) com versão e créditos; cartão "tocando agora" com a cor tirada do logo da rádio; equalizador animado quando está ao vivo; **player em tela cheia** (toque no cartão) com logo grande e controles.
 - **Separar por gênero**: botões de gênero em cima da lista (Todas, Sertanejo, Podcast…), com a quantidade de rádios de cada um; também nas Rádios sugeridas. O campo Gênero do cadastro sugere os gêneros já usados. Com um gênero escolhido a lista não reordena (volte em "Todas" para arrastar).
-- **Outros apps, ligações e GPS**: por padrão a rádio **continua tocando** quando outro app pega o som (opção em Configurações > Geral). Durante ligação pausa e volta sozinha ao desligar; quando o GPS (Maps/Waze) fala, o volume abaixa e depois volta; ao desconectar o fone, pausa.
+- **Outros apps, ligações e GPS**: por padrão a rádio **continua tocando** quando outro app pega o som (opção em Configurações > Geral). Só pausa em **ligação** (telefone ou WhatsApp, detectada pelo modo de áudio do Android) e volta sozinha ao desligar; vídeos e áudios curtos de outros apps não param a rádio; quando o GPS (Maps/Waze) fala, o volume abaixa e depois volta; ao desconectar o fone, pausa.
 - **Cadeado**: no topo (tela inicial e player) fica o cadeado **fechado**; um toque mostra o balão "Toque e segure para travar" e o toque longo trava a tela. Travado, aparece o cadeado **aberto**: tocar nele ou em qualquer lugar da tela mostra o balão com a instrução, e segurar o cadeado (anel enchendo) destrava. O celular vibra ao travar (uma vibração firme) e ao destravar (duas curtas). Travado, os toques não fazem nada (não troca rádio) e o botão voltar não fecha o app. Opção em Configurações > Geral: **Fixar a tela ao travar** (fixação de app do Android; nem o botão de início sai).
 - **Bluetooth**: ícone discreto no topo (tela inicial e player em tela cheia) que abre as configurações de Bluetooth do Android para conectar caixa de som, fone ou o carro. O Android não permite que apps liguem o Bluetooth sozinhos.
 - **Configurações** (engrenagem no topo), com duas abas:
@@ -128,6 +128,10 @@ Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Aut
 
 ## Histórico
 
+- **1.8.2** – a rádio não para mais com vídeos/áudios curtos de outros apps: só pausa em ligação de verdade (telefone ou WhatsApp) e retoma ao desligar.
+
+### Xiaomi/HyperOS: para não parar em segundo plano
+Configurações > Apps > WebRádio > Economia de bateria > **Sem restrições**; e ativar **Início automático**. Na tela de apps recentes, segure o WebRádio e toque no cadeado para fixá-lo.
 - **1.8.1** – vibração real ao travar (uma firme) e destravar (duas curtas), funcionando mesmo com a vibração de toque do sistema desligada.
 - **1.8.0** – cadeado para travar a tela (não troca rádio nem fecha o app; segurar 2 s para destravar) e opção de fixar a tela; inclui as mudanças da 1.7.2 (continua tocando com outros apps), que não chegou a ser publicada.
 - **1.7.2** – não pausa mais ao abrir outro app (opção "Continuar tocando com outros apps"); pausa em ligação e retoma depois; abaixa o volume quando o GPS fala; pausa ao desconectar o fone.
