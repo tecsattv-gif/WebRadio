@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import '../models/station.dart';
 import '../services/radio_handler.dart';
+import '../services/lock_service.dart';
 import '../widgets/bluetooth_button.dart';
+import '../widgets/lock_overlay.dart';
 import '../widgets/equalizer.dart';
 import '../widgets/genre_chips.dart';
 import '../widgets/now_playing_card.dart';
@@ -45,6 +47,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Travado: o botão voltar não fecha o app.
+    return ValueListenableBuilder<bool>(
+      valueListenable: LockService.locked,
+      builder: (context, locked, _) => PopScope(
+        canPop: !locked,
+        child: _buildScaffold(context),
+      ),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Row(
@@ -55,6 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
+          const LockButton(),
           const BluetoothButton(),
           IconButton(
             tooltip: 'Gravações',

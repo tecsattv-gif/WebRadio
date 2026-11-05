@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 
 import '../main.dart';
 import '../services/radio_handler.dart';
+import '../services/lock_service.dart';
 import '../widgets/bluetooth_button.dart';
+import '../widgets/lock_overlay.dart';
 import '../widgets/now_playing_card.dart';
 import '../widgets/station_colors.dart';
 import '../widgets/station_logo.dart';
@@ -31,6 +33,14 @@ class PlayerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: LockService.locked,
+      builder: (context, locked, child) => PopScope(canPop: !locked, child: child!),
+      child: _scaffold(context),
+    );
+  }
+
+  Widget _scaffold(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF110D0A),
       extendBodyBehindAppBar: true,
@@ -45,7 +55,7 @@ class PlayerScreen extends StatelessWidget {
         title: const Text('Tocando agora',
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
         centerTitle: true,
-        actions: const [BluetoothButton(), SizedBox(width: 4)],
+        actions: const [LockButton(), BluetoothButton(), SizedBox(width: 4)],
       ),
       body: const PlayerPanel(topPadding: 56),
     );

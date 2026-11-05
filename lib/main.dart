@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'screens/splash_screen.dart';
 import 'services/firebase_api.dart';
+import 'services/lock_service.dart';
+import 'widgets/lock_overlay.dart';
 import 'services/radio_handler.dart';
 
 late final RadioHandler radio;
@@ -19,6 +21,7 @@ Future<void> main() async {
     ),
   );
   await FirebaseApi.init();
+  await LockService.init();
   await radio.init();
   runApp(const WebRadioApp());
 }
@@ -68,6 +71,7 @@ class WebRadioApp extends StatelessWidget {
           foregroundColor: Colors.black,
         ),
       ),
+      builder: (context, child) => LockOverlay(child: child ?? const SizedBox()),
       home: const SplashScreen(),
     );
   }

@@ -25,7 +25,29 @@ for src in overlay.rglob("*"):
         shutil.copyfile(src, dst)
         print("copiado", dst.relative_to(root))
 
-# 2) MainActivity
+# 2) MainActivity (player em segundo plano + cadeado/fixar tela)
+KOTLIN_ACTIVITY = """import com.ryanheise.audioservice.AudioServiceActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.MethodChannel
+
+class MainActivity : AudioServiceActivity() {
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "webradio/lock")
+            .setMethodCallHandler { call, result ->
+                try {
+                    when (call.method) {
+                        "pin" -> { startLockTask(); result.success(true) }
+                        "unpin" -> { stopLockTask(); result.success(true) }
+                        else -> result.notImplemented()
+                    }
+                } catch (e: Exception) {
+                    result.success(false)
+                }
+            }
+    }
+}
+"""
 acts = list((android / "app/src/main").rglob("MainActivity.kt")) + list(
     (android / "app/src/main").rglob("MainActivity.java"))
 if not acts:
@@ -35,9 +57,7 @@ for act in acts:
     pkg = re.search(r"^package\s+([\w.]+)", text, re.M).group(1)
     if act.suffix == ".kt":
         act.write_text(
-            f"package {pkg}\n\n"
-            "import com.ryanheise.audioservice.AudioServiceActivity\n\n"
-            "class MainActivity : AudioServiceActivity()\n")
+            f"package {pkg}\n\n" + KOTLIN_ACTIVITY)
     else:
         act.write_text(
             f"package {pkg};\n\n"

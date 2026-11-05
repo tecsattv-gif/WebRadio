@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../main.dart';
+import '../services/lock_service.dart';
 import '../services/update_service.dart';
 import '../widgets/format.dart';
 import 'backup_screen.dart';
@@ -119,6 +120,27 @@ class _GeneralTab extends StatelessWidget {
             value: v,
             activeThumbColor: const Color(0xFFFF8A1F),
             onChanged: (nv) => radio.setKeepPlayingWithOtherApps(nv),
+          ),
+        ),
+        ValueListenableBuilder<bool>(
+          valueListenable: LockService.pinScreen,
+          builder: (context, v, _) => SwitchListTile(
+            secondary: Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF8A1F).withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.push_pin_outlined, color: Color(0xFFFF8A1F)),
+            ),
+            title: const Text('Fixar a tela ao travar',
+                style: TextStyle(fontWeight: FontWeight.w600)),
+            subtitle: const Text(
+                'Com o cadeado fechado, nem o botão de início sai do app. O Android pede confirmação.'),
+            value: v,
+            activeThumbColor: const Color(0xFFFF8A1F),
+            onChanged: (nv) => LockService.setPinScreen(nv),
           ),
         ),
         const Divider(),
