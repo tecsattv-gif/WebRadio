@@ -1,18 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Permissão de notificação (Android 13+). Sem ela, o Android/Xiaomi
 /// pode parar a rádio em segundo plano.
 class NotificationPermission {
   static const _kAsked = 'asked_notification_permission';
+  static const _ch = MethodChannel('webradio/notif');
+
+  static Future<bool> _granted() async {
+    try {
+      return await _ch.invokeMethod<bool>('granted') ?? true;
+    } catch (_) {
+      return true;
+    }
+  }
+
+  static Future<void> _request() async {
+    try {
+      await _ch.invokeMethod('request');
+    } catch (_) {}
+    // A resposta vem numa janela do Android: confere de novo em seguida.
+    for (var i = 0; i < 20; i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      if (await _granted()) break;
+    }
+  }
 
   /// true quando a notificação está bloqueada (mostra o aviso na tela inicial).
   static final ValueNotifier<bool> blocked = ValueNotifier(false);
 
   static Future<void> refresh() async {
     try {
-      blocked.value = !(await Permission.notification.isGranted);
+      blocked.value = !(await _granted());
     } catch (_) {
       blocked.value = false;
     }
@@ -21,7 +41,7 @@ class NotificationPermission {
   /// Ao abrir o app: explica e pede uma vez; depois só mostra o aviso.
   static Future<void> checkOnStart(BuildContext context) async {
     try {
-      if (await Permission.notification.isGranted) {
+      if (await _granted()) {
         blocked.value = false;
         return;
       }
@@ -46,7 +66,7 @@ class NotificationPermission {
           ],
         ),
       );
-      if (ok == true) await Permission.notification.request();
+      if (ok == true) await _request();
       await refresh();
     } catch (_) {}
   }
@@ -54,8 +74,8 @@ class NotificationPermission {
   /// Pede de novo; se o Android não deixar mais pedir, abre as configurações do app.
   static Future<void> fix() async {
     try {
-      final st = await Permission.notification.request();
-      if (!st.isGranted) await openAppSettings();
+      await _request();
+      if (!await _granted()) await _ch.invokeMethod('settings');
     } catch (_) {}
     await refresh();
   }

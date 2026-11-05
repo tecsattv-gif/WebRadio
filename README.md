@@ -2,7 +2,7 @@
 
 App Android para ouvir **as suas rádios** pela internet: você monta a sua lista com os links de streaming e o app toca em segundo plano, com controles na notificação, na tela de bloqueio, no fone e no **Android Auto**.
 
-Versão atual: **1.8.4**
+Versão atual: **1.8.5**
 
 ## Funções
 
@@ -125,10 +125,11 @@ tool/patch_android.py           ajusta a pasta android/ durante o build
 assets/                         ícone do app
 ```
 
-Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Auto), `image_picker` (galeria), `file_picker` (backup), `open_filex` (instalar atualização), `app_settings` (atalho do Bluetooth), `vibration` (vibração do cadeado), `permission_handler` (permissão de notificação).
+Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Auto), `image_picker` (galeria), `file_picker` (backup), `open_filex` (instalar atualização), `app_settings` (atalho do Bluetooth), `vibration` (vibração do cadeado). A permissão de notificação é pedida direto pelo código Android do app (canal `webradio/notif`).
 
 ## Histórico
 
+- **1.8.5** – publica o pedido de notificação (1.8.3) e o espaço da barra de navegação (1.8.4), que não compilaram; a permissão agora é pedida sem o plugin permission_handler.
 - **1.8.4** – listas (Configurações, Busca, Backup, Sincronizar, Gravações, Sugeridas, tela inicial) deixam espaço para a barra de navegação do Android; o item "Sobre" não fica mais escondido.
 - **1.8.3** – pede a permissão de notificação (necessária para não parar em segundo plano) e mostra aviso enquanto estiver desligada.
 - **1.8.2** – a rádio não para mais com vídeos/áudios curtos de outros apps: só pausa em ligação de verdade (telefone ou WhatsApp) e retoma ao desligar.
