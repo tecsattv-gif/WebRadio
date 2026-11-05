@@ -4,6 +4,7 @@ import '../main.dart';
 import '../models/station.dart';
 import '../services/radio_handler.dart';
 import '../services/lock_service.dart';
+import '../services/notification_permission.dart';
 import '../widgets/bluetooth_button.dart';
 import '../widgets/lock_overlay.dart';
 import '../widgets/equalizer.dart';
@@ -33,8 +34,13 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     // Ao voltar para o app, pega as mudanças feitas em outro celular.
-    _lifecycle = AppLifecycleListener(onResume: () => radio.sync.syncNow());
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    _lifecycle = AppLifecycleListener(onResume: () {
+      radio.sync.syncNow();
+      NotificationPermission.refresh(); // voltou das configurações?
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      await NotificationPermission.checkOnStart(context);
       if (mounted) UpdateService.checkOnStart(context);
     });
   }
@@ -95,6 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, list, _) {
           if (list.isEmpty) return const _EmptyState();
           final listParts = <Widget>[
+              const NotificationWarning(),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 4),
                 child: Row(
