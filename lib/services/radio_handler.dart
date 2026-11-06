@@ -419,9 +419,12 @@ class RadioHandler extends BaseAudioHandler {
     return b.toString();
   }
 
+  /// App fechado (arrastado para fora da tela de apps recentes): para a
+  /// rádio e encerra o serviço (1.8.8). Antes, se estivesse tocando,
+  /// continuava tocando com o app fechado. Minimizado continua tocando.
   @override
   Future<void> onTaskRemoved() async {
-    if (!_wantPlaying) await stop();
+    await stop();
   }
 
   // ------------------------------------------------------------ Android Auto

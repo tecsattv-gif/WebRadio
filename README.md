@@ -21,7 +21,7 @@ Versão atual: **1.8.5**
 - **Logo automático**: escolha uma imagem da galeria ou cole o link de uma imagem; o app baixa e converte sozinho num logo pequeno (PNG 128 px) guardado dentro da rádio. Assim o logo funciona sem internet, aparece na notificação/Android Auto e vai junto na sincronização e nas rádios sugeridas. Aceita PNG, JPG, WEBP e GIF (SVG não).
 - **Testar link** antes de salvar: diz se o link é de áudio ou de uma página.
 - Aceita link direto (MP3, AAC, OGG), **HLS (.m3u8)** e playlists **.pls / .m3u / .asx** (o app acha o áudio dentro delas).
-- **Toca em segundo plano** com notificação, tela de bloqueio e botões do fone (play/pausa, próxima, anterior).
+- **Toca em segundo plano** com notificação, tela de bloqueio e botões do fone (play/pausa, próxima, anterior). Fechar o app (arrastar para fora dos recentes) para a rádio.
 - **Reconexão automática**: se o sinal cai (túnel, estrada sem cobertura), o app tenta reconectar sozinho por vários minutos.
 - **Nome da música tocando**: mostra título e artista quando a rádio envia (metadados ICY), também na notificação e no Android Auto.
 - **Timer para desligar**: 15, 30, 45 min, 1 h, 1 h 30, 2 h ou tempo livre; o volume baixa aos poucos nos últimos 20 segundos.
@@ -130,6 +130,7 @@ Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Aut
 
 ## Histórico
 
+- **1.8.8** – fechar o app (arrastar para fora dos apps recentes) **para a rádio**; antes continuava tocando. Minimizado (botão Início ou outro app na frente) continua tocando normalmente.
 - **1.8.7** – **Rádios perto de mim (FM local)** na aba Buscar rádios: acha pelo GPS as rádios da sua região, mais perto primeiro.
 - **1.8.6** – o app já vem com 24 rádios na primeira instalação (lista padrão tirada do backup do Luiz).
 - **1.8.5** – publica o pedido de notificação (1.8.3) e o espaço da barra de navegação (1.8.4), que não compilaram; a permissão agora é pedida sem o plugin permission_handler.
