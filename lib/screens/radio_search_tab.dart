@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../main.dart';
@@ -109,6 +110,57 @@ class _RadioSearchTabState extends State<RadioSearchTab>
       setState(() {
         _loading = false;
         _error = 'Não consegui buscar agora. Confira a internet e tente de novo.';
+      });
+    }
+  }
+
+  /// "Perto de mim" (1.8.7): rádios da sua região pelo GPS.
+  Future<void> _nearby() async {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) {
+        throw 'Ligue a localização (GPS) do celular.';
+      }
+      var perm = await Geolocator.checkPermission();
+      if (perm == LocationPermission.denied) {
+        perm = await Geolocator.requestPermission();
+      }
+      if (perm == LocationPermission.denied ||
+          perm == LocationPermission.deniedForever) {
+        throw 'Sem permissão de localização, não dá para achar as rádios perto de você.';
+      }
+      Position? pos;
+      try {
+        pos = await Geolocator.getCurrentPosition(
+            locationSettings: const LocationSettings(
+                accuracy: LocationAccuracy.low,
+                timeLimit: Duration(seconds: 20)));
+      } catch (_) {
+        pos = await Geolocator.getLastKnownPosition();
+      }
+      if (pos == null) throw 'Não consegui pegar a sua posição. Tente de novo.';
+      final list = await RadioBrowser.nearby(pos.latitude, pos.longitude);
+      if (!mounted) return;
+      setState(() {
+        _style = null;
+        _results = list;
+        _loading = false;
+        if (list.isEmpty) {
+          _error = 'Nenhuma rádio da sua região no diretório. '
+              'Tente buscar pelo nome da cidade.';
+        }
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _error = e is String
+            ? e
+            : 'Não consegui buscar agora. Confira a internet e tente de novo.';
       });
     }
   }
@@ -241,6 +293,15 @@ class _RadioSearchTabState extends State<RadioSearchTab>
               },
             ),
             const SizedBox(height: 10),
+            OutlinedButton.icon(
+              onPressed: _loading ? null : _nearby,
+              icon: const Icon(Icons.my_location),
+              label: const Text('Rádios perto de mim (FM local)'),
+              style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(46),
+                  shape: const StadiumBorder()),
+            ),
+            const SizedBox(height: 10),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -276,7 +337,8 @@ class _RadioSearchTabState extends State<RadioSearchTab>
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 24),
                 child: Text(
-                  'Digite o nome de uma rádio ou toque num estilo.\n'
+                  'Digite o nome de uma rádio, toque num estilo ou em '
+                  '"Rádios perto de mim".\n'
                   'Toque no ▶ para ouvir antes e no + para adicionar à sua lista.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.white60),

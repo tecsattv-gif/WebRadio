@@ -13,7 +13,7 @@ Versão atual: **1.8.5**
 - **Cadeado**: no topo (tela inicial e player) fica o cadeado **fechado**; um toque mostra o balão "Toque e segure para travar" e o toque longo trava a tela. Travado, aparece o cadeado **aberto**: tocar nele ou em qualquer lugar da tela mostra o balão com a instrução, e segurar o cadeado (anel enchendo) destrava. O celular vibra ao travar (uma vibração firme) e ao destravar (duas curtas). Travado, os toques não fazem nada (não troca rádio) e o botão voltar não fecha o app. Opção em Configurações > Geral: **Fixar a tela ao travar** (fixação de app do Android; nem o botão de início sai).
 - **Bluetooth**: ícone discreto no topo (tela inicial e player em tela cheia) que abre as configurações de Bluetooth do Android para conectar caixa de som, fone ou o carro. O Android não permite que apps liguem o Bluetooth sozinhos.
 - **Configurações** (engrenagem no topo), com duas abas:
-  - **Buscar rádios**: busca no diretório gratuito Radio Browser por nome, estilo (Sertanejo, Gospel, Notícias, Forró…) e país (Brasil por padrão). Toque no ▶ para ouvir antes e no + para adicionar à lista — o app já traz o logo (convertido) e o gênero.
+  - **Buscar rádios**: busca no diretório gratuito Radio Browser por nome, estilo (Sertanejo, Gospel, Notícias, Forró…) e país (Brasil por padrão). Toque no ▶ para ouvir antes e no + para adicionar à lista — o app já traz o logo (convertido) e o gênero. O botão **Rádios perto de mim (FM local)** (1.8.7) usa o GPS: mostra as rádios do diretório num raio de 120 km, a mais perto primeiro (com a distância), e depois as do seu estado/região sem posição no mapa. O país e o estado vêm do OpenStreetMap (Nominatim). A localização só é pedida quando você toca no botão. Só aparecem rádios que transmitem pela internet (o Radio Browser não tem todas as FMs; o celular não sintoniza FM pelo ar).
   - **Geral**: Rádios sugeridas, Sincronizar celulares, Backup e restauração, Gravações, Procurar atualização e Sobre.
 - **Tela deitada e tablet**: em telas largas (central multimídia Android do carro, tablet, celular deitado) a tela inicial se divide em duas: player grande à esquerda e lista de rádios à direita. O player em tela cheia também tem versão deitada (logo de um lado, controles do outro). Em tablet em pé, o conteúdo e os formulários ficam centralizados.
 - **Central multimídia do carro**: instala como em qualquer Android 7+ (baixe o APK em Releases pelo navegador da central ou copie por pendrive). Os botões de mídia do volante funcionam se a central repassar os botões padrão do Android.
@@ -126,10 +126,11 @@ tool/patch_android.py           ajusta a pasta android/ durante o build
 assets/                         ícone do app e lista padrão de rádios (default_stations.json)
 ```
 
-Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Auto), `image_picker` (galeria), `file_picker` (backup), `open_filex` (instalar atualização), `app_settings` (atalho do Bluetooth), `vibration` (vibração do cadeado). A permissão de notificação é pedida direto pelo código Android do app (canal `webradio/notif`).
+Tecnologia: Flutter, `just_audio` + `audio_service` (segundo plano e Android Auto), `image_picker` (galeria), `file_picker` (backup), `open_filex` (instalar atualização), `app_settings` (atalho do Bluetooth), `vibration` (vibração do cadeado), `geolocator` (Rádios perto de mim). A permissão de notificação é pedida direto pelo código Android do app (canal `webradio/notif`).
 
 ## Histórico
 
+- **1.8.7** – **Rádios perto de mim (FM local)** na aba Buscar rádios: acha pelo GPS as rádios da sua região, mais perto primeiro.
 - **1.8.6** – o app já vem com 24 rádios na primeira instalação (lista padrão tirada do backup do Luiz).
 - **1.8.5** – publica o pedido de notificação (1.8.3) e o espaço da barra de navegação (1.8.4), que não compilaram; a permissão agora é pedida sem o plugin permission_handler.
 - **1.8.4** – listas (Configurações, Busca, Backup, Sincronizar, Gravações, Sugeridas, tela inicial) deixam espaço para a barra de navegação do Android; o item "Sobre" não fica mais escondido.
